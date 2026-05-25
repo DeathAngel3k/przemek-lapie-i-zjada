@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Przemek łapie (i zjada) herbate do kotła</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #eef5db;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        h1 { color: #4f6d7a; margin-bottom: 5px; text-align: center; font-size: 2rem; }
+        #instrukcja { color: #7c9885; margin-bottom: 15px; font-size: 1.1rem; text-align: center;}
+
+        #main-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            width: 100%;
+            max-width: 1500px;
+        }
+
+        #left-sidebar-bee {
+            width: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            margin-top: 140px;
+            position: relative;
+        }
+
+        #game-and-bottom-container {
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        #right-sidebar-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            margin-top: 52px;
+        }
+
+        #right-sidebar-main {
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        #right-sidebar-tickets {
+            width: 140px;
+            flex-shrink: 0;
+        }
+
+        #bee-npc-container {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
+        }
+
+        #bee-bubble {
+            position: absolute;
+            top: -110px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 4px solid #4f6d7a;
+            border-radius: 16px;
+            padding: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            width: 230px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            font-size: 1.05rem;
+            pointer-events: none;
+            z-index: 20;
+        }
+        #bee-bubble::after {
+            content: ''; position: absolute; bottom: -16px; left: 50%;
+            transform: translateX(-50%); border-width: 16px 16px 0;
+            border-style: solid; border-color: white transparent; display: block; width: 0; z-index: 1;
+        }
+        #bee-bubble::before {
+            content: ''; position: absolute; bottom: -22px; left: 50%;
+            transform: translateX(-50%); border-width: 18px 18px 0;
+            border-style: solid; border-color: #4f6d7a transparent; display: block; width: 0; z-index: 0;
+        }
+
+        #bee-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            z-index: 5;
+            user-select: none;
+        }
+
+        #ui-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            justify-content: center;
+        }
+        .stat-box { background: white; padding: 8px 14px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 5px; }
+        #lives-display { color: #e74c3c; letter-spacing: 2px; }
+
+        .sidebar-box {
+            background: white;
+            border: 3px solid #4f6d7a;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .sidebar-box h3 { font-size: 0.9rem; color: #7c9885; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-value { font-size: 1.8rem; font-weight: bold; color: #2c3e50; }
+
+        .vertical-inventory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .inventory-item-slot { 
+            background: #34495e; 
+            color: white;
+            padding: 10px 12px; 
+            border-radius: 8px; 
+            border: 2px solid #2c3e50; 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center; 
+            font-weight: bold; 
+            font-size: 0.85rem; 
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: left;
+        }
+        .inventory-item-slot:hover { background: #415b76; }
+        .inventory-item-slot span.count { color: #f1c40f; font-size: 1rem; }
+
+        #game-canvas {
+            width: 600px;
+            height: 700px;
+            background: linear-gradient(to bottom, #c7e8f3, #e6f5fa);
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #4f6d7a;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        #pause-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 2px solid #4f6d7a;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 8;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        #pause-btn:hover { background: #eee; }
+
+        #effect-bar { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: #f1c40f; color: #333; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); z-index: 5; display: none; white-space: nowrap; }
+        
+        #basket { 
+            width: 80px; 
+            height: 45px; 
+            background: #2c3e50; 
+            position: absolute; 
+            bottom: 15px; 
+            left: 260px; 
+            border-radius: 4px 4px 25px 25px; 
+            border: 4px solid #1a252f; 
+            box-shadow: inset 0 6px 0 rgba(255,255,255,0.1); 
+            transition: width 0.2s ease; 
+        }
+        #basket::before {
+            content: ''; position: absolute; top: -4px; left: -6px;
+            width: calc(100% + 12px); height: 6px; background: #1a252f; border-radius: 4px;
+        }
+        #basket::after { 
+            content: ''; position: absolute; top: 10px; left: -10px; 
+            width: 10px; height: 14px; border: 3px solid #1a252f; 
+            border-right: none; border-radius: 8px 0 0 8px;
+        }
+
+        .score-popup { position: absolute; font-weight: bold; font-size: 1.3rem; z-index: 6; animation: floatUp 0.8s ease-out forwards; pointer-events: none; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-40px); opacity: 0; } }
+
+        .falling-obj { position: absolute; top: -60px; transition: width 0.2s, height 0.2s; }
+        .falling-obj.big-size { width: 60px !important; height: 70px !important; border-width: 3px !important; }
+        .falling-obj.bus.big-size { width: 90px !important; height: 55px !important; }
+
+        .tea { width: 30px; height: 35px; background: #db7c7c; border-radius: 4px; border: 2px solid #b85252; }
+        .tea::before { content: ''; position: absolute; top: -10px; left: 50%; width: 2px; height: 10px; background: #999; }
+        .tea::after { content: ''; position: absolute; top: -14px; left: 55%; width: 8px; height: 6px; background: #f4d06f; border-radius: 2px; }
+        
+        .tea.gold { background: #f1c40f; border: 2px solid #d4ac0d; box-shadow: 0 0 12px #f1c40f; }
+        .tea.gold::after { background: #e74c3c; width: 9px; height: 7px; }
+        
+        .tea.green-tea { background: #2ecc71; border: 2px solid #27ae60; border-radius: 6px; box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
+        .tea.green-tea::after { background: #1abc9c; border-radius: 0 10px 0 10px; width: 10px; height: 8px; top: -13px; left: 45%; }
+        
+        .bus { width: 55px; height: 35px; background: #f39c12; border: 3px solid #34495e; border-radius: 6px; box-shadow: inset -10px 0 0 #34495e; }
+        .bus::after { content: ''; position: absolute; bottom: -6px; left: 6px; width: 10px; height: 6px; background: #2c3e50; border-radius: 2px 2px 0 0; box-shadow: 28px 0 0 #2c3e50; }
+        
+        .nectar { width: 26px; height: 34px; background: #e67e22; border: 2px solid #d35400; border-radius: 5px 5px 10px 10px; box-shadow: 0 0 10px rgba(230, 126, 34, 0.6); }
+        .nectar::after { content: ''; position: absolute; top: 10px; left: 0; width: 100%; height: 4px; background: #2c3e50; box-shadow: 0 8px 0 #2c3e50; }
+
+        .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: 8px; padding: 20px; }
+        .hidden { display: none !important; }
+        .overlay-screen h2 { font-size: 2.2rem; color: #f4d06f; margin-bottom: 5px; text-align: center; }
+        
+        .menu-btn-container { display: flex; flex-direction: column; gap: 12px; width: 280px; margin-top: 15px; }
+        .btn { padding: 12px 24px; font-size: 1.1rem; font-weight: bold; background: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-align: center; }
+        .btn:hover { background: #27ae60; transform: scale(1.03); }
+        .btn-orange { background: #e67e22; }
+        .btn-orange:hover { background: #d35400; }
+        .btn-blue { background: #3498db; }
+        .btn-blue:hover { background: #2980b9; }
+        .btn-red { background: #e74c3c; }
+        .btn-red:hover { background: #c0392b; }
+        .btn-secondary { background: #7f8c8d; }
+        .btn-secondary:hover { background: #717d7e; }
+
+        #game-over-screen h2 { color: #ff7675; }
+
+        .shop-container { width: 100%; max-width: 550px; display: flex; flex-direction: column; height: 380px; }
+        .shop-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .shop-tab-btn { flex: 1; padding: 10px; background: #34495e; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .shop-tab-btn.active { background: #f1c40f; color: #2c3e50; }
+        .shop-content { flex: 1; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 15px; overflow-y: auto; }
+        .shop-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.08); padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); gap: 10px; }
+        .shop-item-info { flex: 1; text-align: left; }
+        .shop-item-info h4 { color: #f1c40f; font-size: 1rem; margin-bottom: 2px; }
+        .shop-item-info p { font-size: 0.8rem; color: #bbb; line-height: 1.2; }
+        .shop-buy-btn { padding: 8px 12px; background: #2ecc71; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; flex-shrink: 0; }
+        .shop-buy-btn:hover { background: #27ae60; }
+        .shop-buy-btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <h1>Przemek łapie (i zjada) herbate do kotła ☕</h1>
+    <div id="instrukcja">Sterowanie: <b>A</b> / <b>D</b> | Użyj przedmiotów klawiszami: <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b></div>
+
+    <div id="main-container">
+        
+        <div id="left-sidebar-bee">
+            <div id="bee-npc-container">
+                <div id="bee-bubble">Cześć! Złap jak najwięcej herbat i przemień je w PSZunkty!</div>
+                <img src="bee-space.png" id="bee-image" alt="Pszczoła NPC z kosmosu">
+            </div>
+        </div>
+
+        <div id="game-and-bottom-container">
+            
+            <div id="ui-container">
+                <div class="stat-box">Życia: <span id="lives-display">❤️❤️❤️</span></div>
+                <div class="stat-box">Herbaty: <span id="score" style="color: #db7c7c;">0</span> ☕</div>
+                <div class="stat-box">Prędkość: <span id="speed-level">1.0</span>x</div>
+            </div>
+
+            <div id="game-canvas">
+                <button id="pause-btn" onclick="togglePauseGame()">⚙️</button>
+                <div id="effect-bar">Aktywny efekt: Brak (0s)</div>
+                <div id="basket"></div>
+                
+                <div id="main-menu-screen" class="overlay-screen">
+                    <h2>Przemek łapie (i zjada)<br>herbate do kotła</h2>
+                    <p style="color: #bbb; font-style: italic; margin-top: 10px;">Złap jak najwięcej herbat i przemień je w PSZunkty!</p>
+                    <div class="menu-btn-container">
+                        <button class="btn" onclick="showModeSelection()">GRAJ</button>
+                        <button class="btn btn-orange" onclick="showShop()">SZklep</button>
+                    </div>
+                </div>
+
+                <div id="mode-selection-screen" class="overlay-screen hidden">
+                    <h2>Wybierz Tryb Gry</h2>
+                    <div class="menu-btn-container">
+                        <button class="btn btn-blue" onclick="startNormalMode()">Normal</button>
+                        <button class="btn btn-orange" onclick="startChaosMode()">Chaos</button>
+                        <button class="btn btn-secondary" onclick="backToMainMenu()">Powrót</button>
+                    </div>
+                </div>
+
+                <div id="pause-screen" class="overlay-screen hidden">
+                    <h2>Gra wstrzymana ⏸️</h2>
+                    <div class="menu-btn-container">
+                        <button class="btn btn-blue" onclick="togglePauseGame()">Powrót do gry</button>
+                        <button class="btn btn-red" onclick="quitToMainMenuFromPause()">Powrót do Menu</button>
+                    </div>
+                </div>
+
+                <div id="shop-screen" class="overlay-screen hidden">
+                    <h2>PSZczeli SZklep 🛒</h2>
+                    <div style="font-weight: bold; color: #f1c40f; margin-bottom: 15px;" id="shop-wallet">PSZunkty: 0 🪙</div>
+                    
+                    <div class="shop-container">
+                        <div class="shop-tabs">
+                            <button id="tab-one-time" class="shop-tab-btn active" onclick="switchShopTab('one-time')">pSZedmioty jednorazowe</button>
+                            <button id="tab-perm" class="shop-tab-btn" onclick="switchShopTab('perm')">pernamentne ulepSZenia</button>
+                        </div>
+                        
+                        <div id="shop-one-time-content" class="shop-content">
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>PSZczeli bilet 🎫</h4>
+                                    <p>Pozwala odrodzić się po przegranej i grać dalej!</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Cena: 100 🪙 (Masz: <span id="shop-ticket-count">0</span>)</p>
+                                </div>
+                                <button class="shop-buy-btn" onclick="buyItem('tickets', 100)">KUP</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Odnowa serc ❤️</h4>
+                                    <p>Przywraca maksymalne zdrowie w trakcie gry. Użyj klawiszem 1.</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Cena: 36 🪙 (Masz: <span id="shop-heal-count">0</span>)</p>
+                                </div>
+                                <button class="shop-buy-btn" onclick="buyItem('heal', 36)">KUP</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Ukraińskie zbawienie 🛡️</h4>
+                                    <p>Nieśmiertelność na 15 sekund. Ignoruje autobusy i uciekające herbaty. Użyj klawiszem 2.</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Cena: 43 🪙 (Masz: <span id="shop-ukr-count">0</span>)</p>
+                                </div>
+                                <button class="shop-buy-btn" onclick="buyItem('ukr', 43)">KUP</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Herbata prosto z kotła 🧪</h4>
+                                    <p>Wywołuje natychmiastowo jeden losowy efekt złotej herbaty. Użyj klawiszem 3.</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Cena: 20 🪙 (Masz: <span id="shop-kocioł-count">0</span>)</p>
+                                </div>
+                                <button class="shop-buy-btn" onclick="buyItem('kocioł', 20)">KUP</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Bóg zapłać, nie dasz więcej? 💰</h4>
+                                    <p>Tracisz 2 HP, ale zyskujesz mnożnik herbat x5 na 10 sekund! Wymaga min. 3 HP. Użyj klawiszem 4.</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Cena: 60 🪙 (Masz: <span id="shop-god-count">0</span>)</p>
+                                </div>
+                                <button class="shop-buy-btn" onclick="buyItem('god', 60)">KUP</button>
+                            </div>
+                        </div>
+                        
+                        <div id="shop-perm-content" class="shop-content hidden">
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Większy kocioł 🧺📈</h4>
+                                    <p>Zwiększa szerokość kocioła o +10% za poziom (Maks. +100%).</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-basket-lvl">0</span>/10 | Szerokość: <span id="perm-basket-val">80</span>px</p>
+                                </div>
+                                <button id="btn-buy-perm-basket" class="shop-buy-btn" onclick="buyPermUpgrade('basketSize')">KUP (<span id="price-perm-basket">100</span> 🪙)</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Więcej żyć ❤️➕</h4>
+                                    <p>Zwiększa maksymalną i początkową ilość żyć o +1 na poziom (Maks. 10).</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-lives-lvl">0</span>/7 | Maksymalne HP: <span id="perm-lives-val">3</span></p>
+                                </div>
+                                <button id="btn-buy-perm-lives" class="shop-buy-btn" onclick="buyPermUpgrade('maxLives')">KUP (<span id="price-perm-lives">100</span> 🪙)</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Lepszy przelicznik PSZunktów 💰📈</h4>
+                                    <p>Zwiększa mnożnik monet na koniec gry o +0.2 za poziom (Maks. 1:4.0).</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-rate-lvl">0</span>/15 | Przelicznik: 1:<span id="perm-rate-val">1.0</span></p>
+                                </div>
+                                <button id="btn-buy-perm-rate" class="shop-buy-btn" onclick="buyPermUpgrade('cashMultiplier')">KUP (<span id="price-perm-rate">700</span> 🪙)</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Większa szansa na złotą herbatę ✨</h4>
+                                    <p>Zwiększa szansę na pojawienie się złotej herbaty o +1% za poziom (Maks. 10%).</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-gold-lvl">0</span>/10 | Aktualna szansa: <span id="perm-gold-val">0</span>%</p>
+                                </div>
+                                <button id="btn-buy-perm-gold" class="shop-buy-btn" onclick="buyPermUpgrade('goldChance')">KUP (<span id="price-perm-gold">20</span> 🪙)</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Większa szansa na zieloną herbatę 🟢</h4>
+                                    <p>Zwiększa szansę na zieloną herbatę o +2% za poziom (Maks. 20%).</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-green-lvl">0</span>/10 | Aktualna szansa: <span id="perm-green-val">0</span>%</p>
+                                </div>
+                                <button id="btn-buy-perm-green" class="shop-buy-btn" onclick="buyPermUpgrade('greenChance')">KUP (<span id="price-perm-green">20</span> 🪙)</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Więcej herbat 📈</h4>
+                                    <p>Zwiększa bazową ilość herbat pozyskiwanych ze złapania.</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-more-lvl">1</span>/5 | Zwykła: +<span id="perm-more-norm">1</span> / Zielona: +<span id="perm-more-green">5</span></p>
+                                </div>
+                                <button id="btn-buy-perm-more" class="shop-buy-btn" onclick="buyPermUpgrade('moreTea')">KUP (<span id="price-perm-more">500</span> 🪙)</button>
+                            </div>
+                            <div class="shop-item">
+                                <div class="shop-item-info">
+                                    <h4>Dłuższe efekty złotej herbaty ⏳</h4>
+                                    <p>Daje dodatkową 1 sekundę trwania do efektów złotej herbaty (Maks. 20s).</p>
+                                    <p style="color: #f1c40f; font-weight: bold; margin-top: 4px;">Poziom: <span id="perm-time-lvl">0</span>/10 | Czas trwania: <span id="perm-time-val">10</span>s</p>
+                                </div>
+                                <button id="btn-buy-perm-time" class="shop-buy-btn" onclick="buyPermUpgrade('effectDuration')">KUP (<span id="price-perm-time">20</span> 🪙)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="menu-btn-container" style="width: 200px; margin-top: 10px;">
+                        <button class="btn btn-secondary" onclick="backToMainMenu()">Powrót</button>
+                    </div>
+                </div>
+
+                <div id="game-over-screen" class="overlay-screen hidden">
+                    <h2>Koniec Gry!</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 5px;">Zebrane Herbaty: <span id="final-score" style="color: #db7c7c; font-weight: bold;">0</span> ☕</p>
+                    <div id="conversion-box" style="background: rgba(241, 196, 15, 0.15); border: 2px solid #f1c40f; padding: 10px 15px; border-radius: 8px; margin: 10px 0; text-align: center; font-weight: bold;">
+                        Przelicznik <span id="end-conversion-rate">1:1.0</span>! Zarobiłeś: <span id="converted-pszunktu" style="color:#f1c40f;">+0</span> PSZunktów 🪙
+                    </div>
+                    
+                    <div class="menu-btn-container">
+                        <button id="continue-btn" class="btn btn-gold hidden" onclick="useTicketAndContinue()">Użyj PSZczelego biletu (Kontynuuj)</button>
+                        <button class="btn" onclick="resetGame()">Zagraj od nowa</button>
+                        <button class="btn btn-secondary" onclick="returnToMenuFromGameOver()">Menu Główne</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="right-sidebar-container">
+            <div id="right-sidebar-main">
+                <div class="sidebar-box">
+                    <h3>Twój Portfel</h3>
+                    <div class="sidebar-value" id="sidebar-pszunkty">0 🪙</div>
+                    <div style="font-size: 0.85rem; color: #7f8c8d; font-weight: bold; margin-top: 5px;">PSZunkty</div>
+                </div>
+
+                <div class="sidebar-box" style="text-align: left;">
+                    <h3 style="text-align: center; margin-bottom: 8px;">pSZedmioty jednorazowe</h3>
+                    <div class="vertical-inventory-list">
+                        <div class="inventory-item-slot" onclick="useHealItem()" title="[Klawisz 1] Odnawia całe zdrowie">
+                            <span>❤️ Odnowa serc (1)</span>
+                            <span class="count" id="bottom-heal-count">0</span>
+                        </div>
+                        <div class="inventory-item-slot" onclick="useUkranianItem()" title="[Klawisz 2] Nieśmiertelność na 15 sekund">
+                            <span>🛡️ Ukraińskie zbawienie (2)</span>
+                            <span class="count" id="bottom-ukr-count">0</span>
+                        </div>
+                        <div class="inventory-item-slot" onclick="useKociołItem()" title="[Klawisz 3] Wywołaj losowy efekt złotej herbaty">
+                            <span>🧪 Herbata prosto z kotła (3)</span>
+                            <span class="count" id="bottom-kocioł-count">0</span>
+                        </div>
+                        <div class="inventory-item-slot" onclick="useGodItem()" title="[Klawisz 4] Kosztuje 2 HP, daje punkty x5 na 10 sekund">
+                            <span>💰 Bóg zapłać (4)</span>
+                            <span class="count" id="bottom-god-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="right-sidebar-tickets">
+                <div class="sidebar-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <h3>PSZczele Bilety</h3>
+                    <div class="sidebar-value" id="bottom-ticket-count" style="color: #e67e22; margin: 10px 0;">0</div>
+                    <div style="font-size: 1.5rem;">🎫</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('game-canvas');
+        const basket = document.getElementById('basket');
+        const scoreDisplay = document.getElementById('score');
+        const speedDisplay = document.getElementById('speed-level');
+        const livesDisplay = document.getElementById('lives-display');
+        const effectBar = document.getElementById('effect-bar');
+        
+        const mainMenuScreen = document.getElementById('main-menu-screen');
+        const modeSelectionScreen = document.getElementById('mode-selection-screen');
+        const shopScreen = document.getElementById('shop-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const pauseScreen = document.getElementById('pause-screen');
+        
+        const sidebarPszunkty = document.getElementById('sidebar-pszunkty');
+        const shopWallet = document.getElementById('shop-wallet');
+        const continueBtn = document.getElementById('continue-btn');
+        const convertedPszunktu = document.getElementById('converted-pszunktu');
+        const endConversionRate = document.getElementById('end-conversion-rate');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const beeBubble = document.getElementById('bee-bubble');
+
+        let playerPszunkty = parseInt(localStorage.getItem('psz_pszunkty')) || 0;
+        let inventory = {
+            tickets: parseInt(localStorage.getItem('psz_tickets')) || 0,
+            heal: parseInt(localStorage.getItem('psz_heal')) || 0,
+            ukr: parseInt(localStorage.getItem('psz_ukr')) || 0,
+            kocioł: parseInt(localStorage.getItem('psz_kocioł')) || 0,
+            god: parseInt(localStorage.getItem('psz_god')) || 0
+        };
+
+        // PERMANENTNE ULEPSZENIA STORAGE
+        let permUpgrades = {
+            goldChance: parseInt(localStorage.getItem('psz_perm_goldChance')) || 0,      
+            greenChance: parseInt(localStorage.getItem('psz_perm_greenChance')) || 0,    
+            maxLives: parseInt(localStorage.getItem('psz_perm_maxLives')) || 0,          
+            cashMultiplier: parseInt(localStorage.getItem('psz_perm_cashMultiplier')) || 0, 
+            moreTea: parseInt(localStorage.getItem('psz_perm_moreTea')) || 1,            
+            effectDuration: parseInt(localStorage.getItem('psz_perm_effectDuration')) || 0,
+            basketSize: parseInt(localStorage.getItem('psz_perm_basketSize')) || 0 
+        };
+
+        const canvasWidth = 600;
+        const canvasHeight = 700;
+        let basketX = 260;
+        let currentBasketWidth = 80; 
+        const basketSpeed = 4; 
+
+        let score = 0; 
+        let lives = 3;
+        const baseFallSpeed = 3;
+        let currentFallSpeed = 3;
+        let speedMultiplier = 1.0;
+
+        let baseSpawnRate = 1100; 
+        let currentSpawnRate = 1100;
+        let isChaosMode = false;
+
+        let activeEffect = null; 
+        let effectTimeout = null;
+        let effectInterval = null;
+        let effectTimeLeft = 0;
+        let pointsMultiplier = 1; 
+        let isTeaBig = false;
+
+        let isImmortal = false; 
+        let immortalTimeout = null;
+        let immortalInterval = null;
+        let immortalTimeLeft = 0;
+
+        let isGodModeActive = false; 
+        let godTimeout = null;
+        let godInterval = null;
+        let godTimeLeft = 0;
+
+        const keys = { a: false, d: false };
+        let objects = []; 
+        
+        let spawnInterval = null;
+        let speedInterval = null;
+        let dynamicSpawnInterval = null;
+        let gameInterval = null;
+        let beeInterval = null;
+        
+        let isGameOver = false, isGameRunning = false, isPaused = false;
+        let isTicketUsedInThisRound = false; 
+
+        let maxPossibleLives = 3 + permUpgrades.maxLives;
+        lives = maxPossibleLives;
+        updateGlobalCurrencyUI();
+        updateLivesUI();
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'a') keys.a = true;
+            if (e.key.toLowerCase() === 'd') keys.d = true;
+            
+            if (isGameRunning && !isGameOver && !isPaused) {
+                if (e.key === '1') useHealItem();
+                if (e.key === '2') useUkranianItem();
+                if (e.key === '3') useKociołItem();
+                if (e.key === '4') useGodItem();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key.toLowerCase() === 'a') keys.a = false;
+            if (e.key.toLowerCase() === 'd') keys.d = false;
+        });
+
+        function savePlayerData() {
+            localStorage.setItem('psz_pszunkty', playerPszunkty);
+            localStorage.setItem('psz_tickets', inventory.tickets);
+            localStorage.setItem('psz_heal', inventory.heal);
+            localStorage.setItem('psz_ukr', inventory.ukr);
+            localStorage.setItem('psz_kocioł', inventory.kocioł);
+            localStorage.setItem('psz_god', inventory.god);
+
+            localStorage.setItem('psz_perm_goldChance', permUpgrades.goldChance);
+            localStorage.setItem('psz_perm_greenChance', permUpgrades.greenChance);
+            localStorage.setItem('psz_perm_maxLives', permUpgrades.maxLives);
+            localStorage.setItem('psz_perm_cashMultiplier', permUpgrades.cashMultiplier);
+            localStorage.setItem('psz_perm_moreTea', permUpgrades.moreTea);
+            localStorage.setItem('psz_perm_effectDuration', permUpgrades.effectDuration);
+            localStorage.setItem('psz_perm_basketSize', permUpgrades.basketSize);
+
+            updateGlobalCurrencyUI();
+        }
+
+        function getUpgradePrice(key) {
+            let basePrice = 20;
+            let currentLvl = permUpgrades[key];
+            if (key === 'moreTea') {
+                basePrice = 500;
+                currentLvl = permUpgrades.moreTea - 1;
+            } else if (key === 'maxLives' || key === 'basketSize') {
+                basePrice = 100;
+            } else if (key === 'cashMultiplier') {
+                basePrice = 700;
+            }
+            return basePrice * Math.pow(2, currentLvl);
+        }
+
+        function getNormalBasketWidth() {
+            return 80 + (permUpgrades.basketSize * 8); 
+        }
+
+        function updateGlobalCurrencyUI() {
+            sidebarPszunkty.textContent = playerPszunkty + " 🪙";
+            shopWallet.textContent = "PSZunkty: " + playerPszunkty + " 🪙";
+            
+            document.getElementById('shop-ticket-count').textContent = inventory.tickets;
+            document.getElementById('shop-heal-count').textContent = inventory.heal;
+            document.getElementById('shop-ukr-count').textContent = inventory.ukr;
+            document.getElementById('shop-kocioł-count').textContent = inventory.kocioł;
+            document.getElementById('shop-god-count').textContent = inventory.god;
+
+            document.getElementById('bottom-ticket-count').textContent = inventory.tickets;
+            document.getElementById('bottom-heal-count').textContent = inventory.heal;
+            document.getElementById('bottom-ukr-count').textContent = inventory.ukr;
+            document.getElementById('bottom-kocioł-count').textContent = inventory.kocioł;
+            document.getElementById('bottom-god-count').textContent = inventory.god;
+
+            let bLvl = permUpgrades.basketSize;
+            document.getElementById('perm-basket-lvl').textContent = bLvl;
+            document.getElementById('perm-basket-val').textContent = 80 + (bLvl * 8);
+            if(bLvl >= 10) {
+                document.getElementById('btn-buy-perm-basket').disabled = true;
+                document.getElementById('btn-buy-perm-basket').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-basket').disabled = false;
+                document.getElementById('price-perm-basket').textContent = getUpgradePrice('basketSize');
+            }
+
+            let gLvl = permUpgrades.goldChance;
+            document.getElementById('perm-gold-lvl').textContent = gLvl;
+            document.getElementById('perm-gold-val').textContent = gLvl;
+            if(gLvl >= 10) {
+                document.getElementById('btn-buy-perm-gold').disabled = true;
+                document.getElementById('btn-buy-perm-gold').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-gold').disabled = false;
+                document.getElementById('price-perm-gold').textContent = getUpgradePrice('goldChance');
+            }
+
+            let grLvl = permUpgrades.greenChance;
+            document.getElementById('perm-green-lvl').textContent = grLvl;
+            document.getElementById('perm-green-val').textContent = (grLvl * 2);
+            if(grLvl >= 10) {
+                document.getElementById('btn-buy-perm-green').disabled = true;
+                document.getElementById('btn-buy-perm-green').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-green').disabled = false;
+                document.getElementById('price-perm-green').textContent = getUpgradePrice('greenChance');
+            }
+
+            let lLvl = permUpgrades.maxLives;
+            document.getElementById('perm-lives-lvl').textContent = lLvl;
+            document.getElementById('perm-lives-val').textContent = 3 + lLvl;
+            if(lLvl >= 7) {
+                document.getElementById('btn-buy-perm-lives').disabled = true;
+                document.getElementById('btn-buy-perm-lives').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-lives').disabled = false;
+                document.getElementById('price-perm-lives').textContent = getUpgradePrice('maxLives');
+            }
+
+            let rLvl = permUpgrades.cashMultiplier;
+            document.getElementById('perm-rate-lvl').textContent = rLvl;
+            document.getElementById('perm-rate-val').textContent = (1.0 + (rLvl * 0.2)).toFixed(1);
+            if(rLvl >= 15) {
+                document.getElementById('btn-buy-perm-rate').disabled = true;
+                document.getElementById('btn-buy-perm-rate').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-rate').disabled = false;
+                document.getElementById('price-perm-rate').textContent = getUpgradePrice('cashMultiplier');
+            }
+
+            let mLvl = permUpgrades.moreTea;
+            document.getElementById('perm-more-lvl').textContent = mLvl;
+            document.getElementById('perm-more-norm').textContent = mLvl;
+            document.getElementById('perm-more-green').textContent = (mLvl * 5);
+            if(mLvl >= 5) {
+                document.getElementById('btn-buy-perm-more').disabled = true;
+                document.getElementById('btn-buy-perm-more').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-more').disabled = false;
+                document.getElementById('price-perm-more').textContent = getUpgradePrice('moreTea');
+            }
+
+            let tLvl = permUpgrades.effectDuration;
+            document.getElementById('perm-time-lvl').textContent = tLvl;
+            document.getElementById('perm-time-val').textContent = (10 + tLvl);
+            if(tLvl >= 10) {
+                document.getElementById('btn-buy-perm-time').disabled = true;
+                document.getElementById('btn-buy-perm-time').textContent = "MAX POZIOM";
+            } else {
+                document.getElementById('btn-buy-perm-time').disabled = false;
+                document.getElementById('price-perm-time').textContent = getUpgradePrice('effectDuration');
+            }
+        }
+
+        function buyPermUpgrade(key) {
+            let maxLvl = 10;
+            if (key === 'moreTea') maxLvl = 5;
+            if (key === 'maxLives') maxLvl = 7;
+            if (key === 'cashMultiplier') maxLvl = 15;
+
+            if (permUpgrades[key] >= maxLvl) return;
+
+            let cost = getUpgradePrice(key);
+            if (playerPszunkty >= cost) {
+                playerPszunkty -= cost;
+                permUpgrades[key]++;
+                savePlayerData();
+                maxPossibleLives = 3 + permUpgrades.maxLives;
+                
+                currentBasketWidth = getNormalBasketWidth();
+                basket.style.width = currentBasketWidth + 'px';
+
+                beeSpeak("Ulepszenie permanentne zakupione! PSZZ!", 2500);
+            } else {
+                beeSpeak("Masz za mało PSZunktów na ulepszenie!", 3000);
+            }
+        }
+
+        /* PAUZA (MAŁE MENU) */
+        function togglePauseGame() {
+            if (!isGameRunning || isGameOver) return;
+
+            if (!isPaused) {
+                isPaused = true;
+                pauseScreen.classList.remove('hidden');
+                cancelAnimationFrame(gameInterval);
+                clearInterval(spawnInterval);
+            } else {
+                isPaused = false;
+                pauseScreen.classList.add('hidden');
+                gameInterval = requestAnimationFrame(updateGame);
+                updateSpawnInterval(currentSpawnRate);
+            }
+        }
+
+        function quitToMainMenuFromPause() {
+            isPaused = false;
+            isGameRunning = false;
+            score = 0;
+            pauseScreen.classList.add('hidden');
+            mainMenuScreen.classList.remove('hidden');
+            resetGameEngineVisuals();
+        }
+
+        /* AKTYWACJE PRZEDMIOTÓW */
+        function useHealItem() {
+            if (!isGameRunning || isGameOver || isPaused) return;
+            if (inventory.heal > 0) {
+                if (lives === maxPossibleLives) {
+                    createPopup("Masz już pełne zdrowie!", "#7f8c8d");
+                    return;
+                }
+                inventory.heal--;
+                lives = maxPossibleLives;
+                updateLivesUI();
+                createPopup("Zdrówko odnowione! ❤️", "#2ecc71", true);
+                savePlayerData();
+            } else {
+                createPopup("Brak przedmiotu!", "#e74c3c");
+            }
+        }
+
+        function useUkranianItem() {
+            if (!isGameRunning || isGameOver || isPaused) return;
+            if (isGodModeActive) {
+                createPopup("Zablokowane przez klątwę Boga! ❌", "#e74c3c");
+                return;
+            }
+            if (inventory.ukr > 0) {
+                inventory.ukr--;
+                savePlayerData();
+                activateUkranianSalvation();
+            } else {
+                createPopup("Brak przedmiotu!", "#e74c3c");
+            }
+        }
+
+        function activateUkranianSalvation() {
+            clearTimeout(immortalTimeout);
+            clearInterval(immortalInterval);
+            
+            isImmortal = true;
+            immortalTimeLeft = 15;
+            updateCombinedEffectsBar();
+
+            immortalInterval = setInterval(() => {
+                if (isPaused) return; 
+                immortalTimeLeft--;
+                if (immortalTimeLeft <= 0) {
+                    isImmortal = false;
+                    clearInterval(immortalInterval);
+                    updateCombinedEffectsBar();
+                } else {
+                    updateCombinedEffectsBar();
+                }
+            }, 1000);
+
+            immortalTimeout = setTimeout(() => {
+                isImmortal = false;
+                updateCombinedEffectsBar();
+            }, 15000);
+
+            createPopup("NIEŚMIERTELNOŚĆ ACTIVATED 🛡️", "#3498db", true);
+        }
+
+        function useKociołItem() {
+            if (!isGameRunning || isGameOver || isPaused) return;
+            if (inventory.kocioł > 0) {
+                inventory.kocioł--;
+                savePlayerData();
+                createPopup("Mikstura z Kotła! 🧪", "#9b59b6", true);
+                activateGoldenEffect();
+            } else {
+                createPopup("Brak przedmiotu!", "#e74c3c");
+            }
+        }
+
+        function useGodItem() {
+            if (!isGameRunning || isGameOver || isPaused) return;
+            if (isGodModeActive) {
+                createPopup("Efekt jest już aktywny! 💰", "#f1c40f");
+                return;
+            }
+            if (inventory.god > 0) {
+                if (lives < 3) {
+                    createPopup("Wymagane minimum 3 serca! ❌", "#e74c3c");
+                    return;
+                }
+                inventory.god--;
+                lives -= 2;
+                updateLivesUI();
+                
+                isGodModeActive = true;
+                pointsMultiplier = 5; 
+                godTimeLeft = 10;
+                
+                createPopup("KONTRAKT PODPISANY! HERBATY x5! ☠️💰", "#f1c40f", true);
+                updateCombinedEffectsBar();
+                
+                if (activeEffect === 'EXTRA_POINTS') {
+                    clearActiveEffect(); 
+                }
+
+                godInterval = setInterval(() => {
+                    if (isPaused) return; 
+                    godTimeLeft--;
+                    if (godTimeLeft <= 0) {
+                        endGodModeEffect();
+                    } else {
+                        updateCombinedEffectsBar();
+                    }
+                }, 1000);
+
+                godTimeout = setTimeout(() => {
+                    endGodModeEffect();
+                }, 10000);
+
+                savePlayerData();
+                if (lives <= 0) endGame();
+            } else {
+                createPopup("Brak przedmiotu!", "#e74c3c");
+            }
+        }
+
+        function updateCombinedEffectsBar() {
+            let activeTexts = [];
+            if (isImmortal) activeTexts.push(`🛡️ Zbawienie (${immortalTimeLeft}s)`);
+            if (isGodModeActive) activeTexts.push(`👑 Boskie x5 (${godTimeLeft}s)`);
+            
+            if (activeEffect === 'BIG_BASKET') activeTexts.push(`🔥 Kocioł x2 (${effectTimeLeft}s)`);
+            if (activeEffect === 'EXTRA_POINTS' && !isGodModeActive) activeTexts.push(`💰 Herbaty x2 (${effectTimeLeft}s)`);
+            if (activeEffect === 'BIG_TEA') activeTexts.push(`🍋 Giganty (${effectTimeLeft}s)`);
+
+            if (activeTexts.length > 0) {
+                effectBar.style.display = 'block';
+                effectBar.textContent = "Efekty: " + activeTexts.join(" | ");
+            } else {
+                effectBar.style.display = 'none';
+            }
+        }
+
+        function endGodModeEffect() {
+            clearTimeout(godTimeout);
+            clearInterval(godInterval);
+            isGodModeActive = false;
+            pointsMultiplier = 1; 
+            createPopup("Boski kontrakt wygasł! 💸", "#e67e22", true);
+            updateCombinedEffectsBar();
+        }
+
+        /* SEKCJA TRYBÓW I MENU */
+        function showModeSelection() {
+            mainMenuScreen.classList.add('hidden');
+            modeSelectionScreen.classList.remove('hidden');
+        }
+
+        function showShop() {
+            mainMenuScreen.classList.add('hidden');
+            shopScreen.classList.remove('hidden');
+            updateGlobalCurrencyUI();
+        }
+
+        function backToMainMenu() {
+            modeSelectionScreen.classList.add('hidden');
+            shopScreen.classList.add('hidden');
+            mainMenuScreen.classList.remove('hidden');
+            updateGlobalCurrencyUI();
+        }
+
+        function startNormalMode() {
+            isChaosMode = false;
+            modeSelectionScreen.classList.add('hidden');
+            score = 0; 
+            isTicketUsedInThisRound = false; 
+            startGame(false); 
+        }
+
+        function startChaosMode() {
+            isChaosMode = true;
+            modeSelectionScreen.classList.add('hidden');
+            score = 0;
+            isTicketUsedInThisRound = false;
+            startGame(false);
+        }
+
+        function returnToMenuFromGameOver() {
+            addEndGamePszunkty();
+            gameOverScreen.classList.add('hidden');
+            mainMenuScreen.classList.remove('hidden');
+            resetGameEngineVisuals();
+        }
+
+        function switchShopTab(tab) {
+            const tabOneTime = document.getElementById('tab-one-time');
+            const tabPerm = document.getElementById('tab-perm');
+            const contentOneTime = document.getElementById('shop-one-time-content');
+            const contentPerm = document.getElementById('shop-perm-content');
+
+            if (tab === 'one-time') {
+                tabOneTime.classList.add('active');
+                tabPerm.classList.remove('active');
+                contentOneTime.classList.remove('hidden');
+                contentPerm.classList.add('hidden');
+            } else {
+                tabPerm.classList.add('active');
+                tabOneTime.classList.remove('active');
+                contentPerm.classList.remove('hidden');
+                contentOneTime.classList.add('hidden');
+            }
+        }
+
+        function buyItem(itemKey, cost) {
+            if (playerPszunkty >= cost) {
+                playerPszunkty -= cost;
+                inventory[itemKey]++;
+                savePlayerData();
+                beeSpeak("Zakup udany! PSZZZZ!", 2500);
+            } else {
+                beeSpeak("Masz za mało PSZunktów, jakiś pszyhlast z ciebie!", 3000);
+            }
+        }
+
+        function useTicketAndContinue() {
+            if (inventory.tickets > 0) {
+                inventory.tickets--;
+                savePlayerData();
+                gameOverScreen.classList.add('hidden');
+                
+                lives = maxPossibleLives;
+                isGameOver = false;
+                isGameRunning = true;
+                isTicketUsedInThisRound = true;
+                
+                beeSpeak("Odrrrrradzamy! Właściciel btw!", 4000);
+                
+                objects.forEach(obj => obj.element.remove());
+                objects = [];
+                
+                gameInterval = requestAnimationFrame(updateGame);
+                updateSpawnInterval(currentSpawnRate);
+                
+                speedInterval = setInterval(() => {
+                    if (!isGameOver && isGameRunning && !isPaused) { speedMultiplier += 0.1; calculateFallSpeed(); }
+                }, 15000);
+
+                dynamicSpawnInterval = setInterval(() => {
+                    if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 350) {
+                        currentSpawnRate -= 50; updateSpawnInterval(currentSpawnRate);
+                    }
+                }, 5000);
+                
+                startBeeRandomTalk();
+                updateLivesUI();
+            }
+        }
+
+        function addEndGamePszunkty() {
+            if (score > 0) {
+                let cashRate = 1.0 + (permUpgrades.cashMultiplier * 0.2);
+                let payout = Math.floor(score * cashRate);
+                playerPszunkty += payout;
+                score = 0;
+                savePlayerData();
+            }
+        }
+
+        function beeSpeak(text, duration = 3000) {
+            beeBubble.textContent = text;
+            beeBubble.style.opacity = '1';
+            setTimeout(() => {
+                if (isGameRunning || isGameOver) {
+                    beeBubble.style.opacity = '0';
+                }
+            }, duration);
+        }
+
+        function triggerStartBeePhrase() {
+            const startPhrases = [
+                "Dalej tyci p, czas złapać herbatę!",
+                "Hej lil p, chodźmy złapać trochę herbaty!",
+                "Ej psz, idź po herbate!",
+                "Nasz mały koszmonauta idzie po Herbate!"
+            ];
+            const chosen = startPhrases[Math.floor(Math.random() * startPhrases.length)];
+            beeSpeak(chosen, 4000);
+        }
+
+        function startBeeRandomTalk() {
+            clearInterval(beeInterval);
+            beeInterval = setInterval(() => {
+                if (!isGameRunning || isGameOver || isPaused) return;
+                
+                const randomPhrases = [
+                    "EJ PSZ",
+                    "czy masz może 3/6 punktów?",
+                    "je#ać gosz",
+                    "Koszmonautów Polskich",
+                    "PSZZZZ",
+                    "Jakiś Pszyhlast",
+                    "Dobra to jusz PSZesada",
+                    "Właściciel btw"
+                ];
+                const chosen = randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
+                beeSpeak(chosen, 3000);
+            }, 8000 + Math.random() * 4000);
+        }
+
+        function createPopup(text, color, isBold = false) {
+            const popup = document.createElement('div');
+            popup.classList.add('score-popup');
+            popup.textContent = text;
+            popup.style.color = color;
+            if (isBold) popup.style.fontWeight = '900';
+            
+            popup.style.left = (basketX + (currentBasketWidth / 2) - 15) + 'px';
+            popup.style.bottom = '60px'; 
+            
+            canvas.appendChild(popup);
+            setTimeout(() => popup.remove(), 800);
+        }
+
+        function spawnObject() {
+            if (isGameOver || !isGameRunning || isPaused) return;
+
+            const objEl = document.createElement('div');
+            objEl.classList.add('falling-obj');
+            
+            const roll = Math.random();
+            let type = 'normal'; 
+            let width = 30;
+
+            let goldChance = (permUpgrades.goldChance) / 100;    
+            let greenChance = (permUpgrades.greenChance * 2) / 100; 
+
+            if (roll < goldChance) { 
+                type = 'gold'; objEl.classList.add('tea', 'gold'); width = 30;
+            } else if (roll < goldChance + greenChance) { 
+                type = 'green'; objEl.classList.add('tea', 'green-tea'); width = 30;
+            } else if (roll < goldChance + greenChance + 0.07) { 
+                type = 'bus'; objEl.classList.add('bus'); width = 55;
+            } else if (roll < goldChance + greenChance + 0.12) { 
+                type = 'nectar'; objEl.classList.add('nectar'); width = 26;
+            } else {
+                type = 'normal'; objEl.classList.add('tea');
+            }
+            
+            if (isTeaBig) {
+                objEl.classList.add('big-size');
+                if (type === 'bus') width = 90;
+                else width = 60;
+            }
+            
+            const randomX = Math.floor(Math.random() * (canvasWidth - width));
+            objEl.style.left = randomX + 'px';
+            objEl.style.top = '-60px';
+            
+            let specSpeed = currentFallSpeed;
+            if (isChaosMode) {
+                specSpeed = (Math.random() * 5 + 2) * speedMultiplier;
+            }
+
+            canvas.appendChild(objEl);
+            objects.push({ element: objEl, x: randomX, y: -60, type: type, width: width, speed: specSpeed });
+        }
+
+        function updateSpawnInterval(rate) {
+            if (spawnInterval) clearInterval(spawnInterval);
+            if (isGameRunning && !isGameOver && !isPaused) {
+                spawnInterval = setInterval(spawnObject, rate);
+            }
+        }
+
+        function activateGoldenEffect() {
+            if (isGodModeActive) {
+                const safeEffects = ['BIG_BASKET', 'BIG_TEA'];
+                executeEffect(safeEffects[Math.floor(Math.random() * safeEffects.length)]);
+            } else {
+                const effects = ['BIG_BASKET', 'EXTRA_POINTS', 'BIG_TEA'];
+                executeEffect(effects[Math.floor(Math.random() * effects.length)]);
+            }
+        }
+
+        function executeEffect(rolledEffect) {
+            clearActiveEffect();
+            activeEffect = rolledEffect;
+            
+            effectTimeLeft = 10 + permUpgrades.effectDuration;
+
+            if (activeEffect === 'BIG_BASKET') {
+                currentBasketWidth = getNormalBasketWidth() * 2; 
+                basket.style.width = currentBasketWidth + 'px';
+            } else if (activeEffect === 'EXTRA_POINTS') {
+                pointsMultiplier = 2; 
+            } else if (activeEffect === 'BIG_TEA') {
+                isTeaBig = true;
+                objects.forEach(obj => { 
+                    obj.element.classList.add('big-size'); 
+                    if (obj.type === 'bus') obj.width = 90;
+                    else width = 60;
+                });
+            }
+
+            updateCombinedEffectsBar();
+
+            effectInterval = setInterval(() => {
+                if (isPaused) return; 
+                effectTimeLeft--;
+                if (effectTimeLeft <= 0) { clearActiveEffect(); } 
+                else { updateCombinedEffectsBar(); }
+            }, 1000);
+
+            effectTimeout = setTimeout(() => {
+                if (!isPaused) clearActiveEffect();
+            }, effectTimeLeft * 1000);
+        }
+
+        function clearActiveEffect() {
+            clearTimeout(effectTimeout); clearInterval(effectInterval);
+            if (activeEffect === 'BIG_BASKET') { 
+                currentBasketWidth = getNormalBasketWidth(); 
+                basket.style.width = currentBasketWidth + 'px'; 
+            }
+            if (activeEffect === 'EXTRA_POINTS' && !isGodModeActive) pointsMultiplier = 1;
+            if (activeEffect === 'BIG_TEA') {
+                isTeaBig = false;
+                objects.forEach(obj => { 
+                    obj.element.classList.remove('big-size'); 
+                    if (obj.type === 'bus') obj.width = 55;
+                    else if (obj.type === 'nectar') obj.width = 26;
+                    else obj.width = 30;
+                });
+            }
+            activeEffect = null;
+            updateCombinedEffectsBar();
+        }
+
+        function calculateFallSpeed() {
+            currentFallSpeed = baseFallSpeed * speedMultiplier;
+            speedDisplay.textContent = speedMultiplier.toFixed(1);
+        }
+
+        function updateLivesUI() {
+            let hearts = "";
+            for (let i = 0; i < lives; i++) hearts += "❤️";
+            if (lives > 5) {
+                hearts = "❤️ x" + lives;
+            }
+            if (lives <= 0) hearts = "☠️";
+            livesDisplay.textContent = hearts;
+        }
+
+        function updateGame() {
+            if (isGameOver || !isGameRunning || isPaused) return;
+
+            if (keys.a && basketX > 0) basketX -= basketSpeed;
+            if (keys.d && basketX < (canvasWidth - currentBasketWidth)) basketX += basketSpeed;
+            basket.style.left = basketX + 'px';
+
+            for (let i = objects.length - 1; i >= 0; i--) {
+                let obj = objects[i];
+                let speedToUse = isChaosMode ? obj.speed : currentFallSpeed;
+                obj.y += speedToUse;
+                obj.element.style.top = obj.y + 'px';
+
+                if (obj.y >= 645 && obj.y <= 675) {
+                    if (obj.x + obj.width >= basketX && obj.x <= basketX + currentBasketWidth) {
+                        if (obj.type === 'bus') {
+                            if (isImmortal) {
+                                createPopup("Zablokowano 🛡️", "#3498db");
+                            } else {
+                                createPopup("-1 HP 🚌", "#e74c3c", true); lives--; updateLivesUI();
+                                if (lives <= 0) endGame();
+                            }
+                        } else if (obj.type === 'nectar') {
+                            if (lives < maxPossibleLives) { createPopup("+1 HP", "#e67e22", false); lives++; updateLivesUI(); } 
+                            else { createPopup("MAX HP", "#2ecc71", false); }
+                        } else if (obj.type === 'gold') {
+                            createPopup(`EFEKT ✨`, "#f1c40f", true); 
+                            activateGoldenEffect();
+                        } else {
+                            let multiplierFromUpgrade = permUpgrades.moreTea; 
+                            let basePoints = 1 * multiplierFromUpgrade;
+                            
+                            if (obj.type === 'green') { 
+                                basePoints = 5 * multiplierFromUpgrade; 
+                                createPopup(`+${basePoints * pointsMultiplier} Herbat ☕`, "#2ecc71", false); 
+                            } else { 
+                                createPopup(`+${basePoints * pointsMultiplier} Herbata ☕`, "#db7c7c", false); 
+                            }
+                            
+                            score += (basePoints * pointsMultiplier); 
+                            scoreDisplay.textContent = score;
+                        }
+                        obj.element.remove(); objects.splice(i, 1); continue;
+                    }
+                }
+
+                if (obj.y > canvasHeight) {
+                    if (obj.type === 'normal' || obj.type === 'green') { 
+                        if (!isImmortal) {
+                            lives--; 
+                            updateLivesUI(); 
+                            if (lives <= 0) endGame(); 
+                        }
+                    }
+                    obj.element.remove(); objects.splice(i, 1); continue;
+                }
+            }
+            gameInterval = requestAnimationFrame(updateGame);
+        }
+
+        function stopAllTimers() {
+            cancelAnimationFrame(gameInterval); clearInterval(spawnInterval); clearInterval(speedInterval);
+            clearInterval(dynamicSpawnInterval); clearInterval(beeInterval);
+            clearTimeout(immortalTimeout); clearInterval(immortalInterval);
+            clearTimeout(godTimeout); clearInterval(godInterval);
+            spawnInterval = null; speedInterval = null; dynamicSpawnInterval = null; beeInterval = null;
+        }
+
+        function resetGameEngineVisuals() {
+            objects.forEach(obj => obj.element.remove());
+            objects = [];
+            stopAllTimers();
+            clearActiveEffect();
+            
+            isImmortal = false;
+            isGodModeActive = false;
+            pointsMultiplier = 1;
+            isPaused = false;
+            pauseScreen.classList.add('hidden');
+            
+            maxPossibleLives = 3 + permUpgrades.maxLives;
+            lives = maxPossibleLives; 
+            speedMultiplier = 1.0; 
+            
+            currentBasketWidth = getNormalBasketWidth(); 
+            basketX = Math.floor((canvasWidth - currentBasketWidth) / 2); 
+            currentSpawnRate = baseSpawnRate; 
+            isGameOver = false;
+            
+            basket.style.width = currentBasketWidth + 'px'; 
+            basket.style.left = basketX + 'px';
+            calculateFallSpeed(); updateLivesUI();
+        }
+
+        function startGame(isContinuation = false) {
+            if (!isContinuation) {
+                resetGameEngineVisuals();
+                score = 0;
+                scoreDisplay.textContent = '0';
+            }
+            isGameRunning = true;
+            if (!isContinuation) triggerStartBeePhrase();
+            startBeeRandomTalk();
+            
+            gameInterval = requestAnimationFrame(updateGame);
+            updateSpawnInterval(currentSpawnRate);
+            
+            speedInterval = setInterval(() => {
+                if (!isGameOver && isGameRunning && !isPaused) { speedMultiplier += 0.1; calculateFallSpeed(); }
+            }, 15000);
+
+            dynamicSpawnInterval = setInterval(() => {
+                if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 350) {
+                    currentSpawnRate -= 50; updateSpawnInterval(currentSpawnRate);
+                }
+            }, 5000);
+            updateGlobalCurrencyUI();
+        }
+
+        function endGame() {
+            isGameOver = true; isGameRunning = false;
+            stopAllTimers(); clearActiveEffect();
+            
+            let cashRate = 1.0 + (permUpgrades.cashMultiplier * 0.2);
+            let finalPayout = Math.floor(score * cashRate);
+
+            finalScoreDisplay.textContent = score;
+            endConversionRate.textContent = "1:" + cashRate.toFixed(1);
+            convertedPszunktu.textContent = "+" + finalPayout;
+            
+            if (inventory.tickets > 0) {
+                continueBtn.classList.remove('hidden');
+            } else {
+                continueBtn.classList.add('hidden');
+            }
+            
+            gameOverScreen.classList.remove('hidden');
+            beeSpeak("O nie, koniec gry!", 5000);
+        }
+
+        function resetGame() {
+            addEndGamePszunkty();
+            gameOverScreen.classList.add('hidden');
+            score = 0;
+            scoreDisplay.textContent = '0';
+            isTicketUsedInThisRound = false;
+            startGame(false);
+        }
+    </script>
+</body>
+</html>
