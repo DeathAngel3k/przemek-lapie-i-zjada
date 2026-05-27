@@ -211,7 +211,8 @@
             border-radius: 4px 4px 25px 25px; 
             border: 4px solid #1a252f; 
             box-shadow: inset 0 6px 0 rgba(255,255,255,0.1); 
-            transition: width 0.2s ease; 
+            transition: width 0.1s ease; 
+            will-change: left;
         }
         #basket::before {
             content: ''; position: absolute; top: -4px; left: -6px;
@@ -226,25 +227,14 @@
         .score-popup { position: absolute; font-weight: bold; font-size: 1.3rem; z-index: 6; animation: floatUp 0.8s ease-out forwards; pointer-events: none; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-40px); opacity: 0; } }
 
-        .falling-obj { position: absolute; top: -60px; transition: width 0.2s, height 0.2s; }
-        .falling-obj.big-size { width: 60px !important; height: 70px !important; border-width: 3px !important; }
-        .falling-obj.bus.big-size { width: 90px !important; height: 55px !important; }
-
-        .tea { width: 30px; height: 35px; background: #db7c7c; border-radius: 4px; border: 2px solid #b85252; }
-        .tea::before { content: ''; position: absolute; top: -10px; left: 50%; width: 2px; height: 10px; background: #999; }
-        .tea::after { content: ''; position: absolute; top: -14px; left: 55%; width: 8px; height: 6px; background: #f4d06f; border-radius: 2px; }
-        
-        .tea.gold { background: #f1c40f; border: 2px solid #d4ac0d; box-shadow: 0 0 12px #f1c40f; }
-        .tea.gold::after { background: #e74c3c; width: 9px; height: 7px; }
-        
-        .tea.green-tea { background: #2ecc71; border: 2px solid #27ae60; border-radius: 6px; box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
-        .tea.green-tea::after { background: #1abc9c; border-radius: 0 10px 0 10px; width: 10px; height: 8px; top: -13px; left: 45%; }
-        
-        .bus { width: 55px; height: 35px; background: #f39c12; border: 3px solid #34495e; border-radius: 6px; box-shadow: inset -10px 0 0 #34495e; }
-        .bus::after { content: ''; position: absolute; bottom: -6px; left: 6px; width: 10px; height: 6px; background: #2c3e50; border-radius: 2px 2px 0 0; box-shadow: 28px 0 0 #2c3e50; }
-        
-        .nectar { width: 26px; height: 34px; background: #e67e22; border: 2px solid #d35400; border-radius: 5px 5px 10px 10px; box-shadow: 0 0 10px rgba(230, 126, 34, 0.6); }
-        .nectar::after { content: ''; position: absolute; top: 10px; left: 0; width: 100%; height: 4px; background: #2c3e50; box-shadow: 0 8px 0 #2c3e50; }
+        /* Klasa dla optymalizacji obrazków */
+        .falling-obj { 
+            position: absolute; 
+            top: -60px; 
+            object-fit: contain;
+            will-change: transform, top;
+            pointer-events: none;
+        }
 
         .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: 8px; padding: 20px; }
         .hidden { display: none !important; }
@@ -306,7 +296,7 @@
                 <div id="basket"></div>
                 
                 <div id="main-menu-screen" class="overlay-screen">
-                    <h2>Złap <br>herbate do kotła</h2>
+                    <h2>Złap<br>herbate do kotła</h2>
                     <p style="color: #bbb; font-style: italic; margin-top: 10px;">Złap jak najwięcej herbat i przemień je w PSZunkty!</p>
                     <div class="menu-btn-container">
                         <button class="btn" onclick="showModeSelection()">GRAJ</button>
@@ -538,7 +528,6 @@
             god: parseInt(localStorage.getItem('psz_god')) || 0
         };
 
-        // PERMANENTNE ULEPSZENIA STORAGE
         let permUpgrades = {
             goldChance: parseInt(localStorage.getItem('psz_perm_goldChance')) || 0,      
             greenChance: parseInt(localStorage.getItem('psz_perm_greenChance')) || 0,    
@@ -553,14 +542,18 @@
         const canvasHeight = 700;
         let basketX = 260;
         let currentBasketWidth = 80; 
-        const basketSpeed = 4; 
+        
+        // ZMIENNE PREDKOSCI (baza oparta na milisekundach dla 60 klatek na sekunde jako punkt odniesienia)
+        const baseBasketSpeed = 300; // piksele na sekunde
+        const baseFallSpeed = 180;   // piksele na sekunde
+        let currentFallSpeed = 180;
+        let speedMultiplier = 1.0;
+        
+        // DO OPTYMALIZACJI DELTA TIME
+        let lastTime = 0;
 
         let score = 0; 
         let lives = 3;
-        const baseFallSpeed = 3;
-        let currentFallSpeed = 3;
-        let speedMultiplier = 1.0;
-
         let baseSpawnRate = 1100; 
         let currentSpawnRate = 1100;
         let isChaosMode = false;
@@ -772,7 +765,6 @@
             }
         }
 
-        /* PAUZA (MAŁE MENU) */
         function togglePauseGame() {
             if (!isGameRunning || isGameOver) return;
 
@@ -784,6 +776,7 @@
             } else {
                 isPaused = false;
                 pauseScreen.classList.add('hidden');
+                lastTime = performance.now(); // Zapobiega skokowi po odpałowaniu pauzy
                 gameInterval = requestAnimationFrame(updateGame);
                 updateSpawnInterval(currentSpawnRate);
             }
@@ -798,7 +791,6 @@
             resetGameEngineVisuals();
         }
 
-        /* AKTYWACJE PRZEDMIOTÓW */
         function useHealItem() {
             if (!isGameRunning || isGameOver || isPaused) return;
             if (inventory.heal > 0) {
@@ -944,7 +936,6 @@
             updateCombinedEffectsBar();
         }
 
-        /* SEKCJA TRYBÓW I MENU */
         function showModeSelection() {
             mainMenuScreen.classList.add('hidden');
             modeSelectionScreen.classList.remove('hidden');
@@ -1032,6 +1023,7 @@
                 objects.forEach(obj => obj.element.remove());
                 objects = [];
                 
+                lastTime = performance.now();
                 gameInterval = requestAnimationFrame(updateGame);
                 updateSpawnInterval(currentSpawnRate);
                 
@@ -1115,48 +1107,60 @@
             setTimeout(() => popup.remove(), 800);
         }
 
+        // ZAMIANA NA ZDJĘCIA PNG
+        function createImgElement(src, className) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.classList.add('falling-obj', className);
+            return img;
+        }
+
         function spawnObject() {
             if (isGameOver || !isGameRunning || isPaused) return;
 
-            const objEl = document.createElement('div');
-            objEl.classList.add('falling-obj');
-            
-            const roll = Math.random();
             let type = 'normal'; 
             let width = 30;
+            let imgSrc = 'tea-normal.png';
+            let customClass = 'tea';
 
             let goldChance = (permUpgrades.goldChance) / 100;    
             let greenChance = (permUpgrades.greenChance * 2) / 100; 
+            const roll = Math.random();
 
             if (roll < goldChance) { 
-                type = 'gold'; objEl.classList.add('tea', 'gold'); width = 30;
+                type = 'gold'; imgSrc = 'tea-gold.png'; customClass = 'gold'; width = 30;
             } else if (roll < goldChance + greenChance) { 
-                type = 'green'; objEl.classList.add('tea', 'green-tea'); width = 30;
+                type = 'green'; imgSrc = 'tea-green.png'; customClass = 'green-tea'; width = 30;
             } else if (roll < goldChance + greenChance + 0.07) { 
-                type = 'bus'; objEl.classList.add('bus'); width = 55;
+                type = 'bus'; imgSrc = 'bus.png'; customClass = 'bus'; width = 55;
             } else if (roll < goldChance + greenChance + 0.12) { 
-                type = 'nectar'; objEl.classList.add('nectar'); width = 26;
-            } else {
-                type = 'normal'; objEl.classList.add('tea');
+                type = 'nectar'; imgSrc = 'nectar.png'; customClass = 'nectar'; width = 26;
             }
+
+            const objEl = createImgElement(imgSrc, customClass);
             
+            let height = (type === 'bus') ? 35 : 35;
+            if (type === 'nectar') height = 34;
+
             if (isTeaBig) {
-                objEl.classList.add('big-size');
-                if (type === 'bus') width = 90;
-                else width = 60;
+                if (type === 'bus') { width = 90; height = 55; }
+                else { width = 60; height = 70; }
             }
             
+            objEl.style.width = width + 'px';
+            objEl.style.height = height + 'px';
+
             const randomX = Math.floor(Math.random() * (canvasWidth - width));
             objEl.style.left = randomX + 'px';
             objEl.style.top = '-60px';
             
             let specSpeed = currentFallSpeed;
             if (isChaosMode) {
-                specSpeed = (Math.random() * 5 + 2) * speedMultiplier;
+                specSpeed = (Math.random() * 300 + 120) * speedMultiplier; // Skalowanie dla delty
             }
 
             canvas.appendChild(objEl);
-            objects.push({ element: objEl, x: randomX, y: -60, type: type, width: width, speed: specSpeed });
+            objects.push({ element: objEl, x: randomX, y: -60, type: type, width: width, height: height, speed: specSpeed });
         }
 
         function updateSpawnInterval(rate) {
@@ -1190,9 +1194,10 @@
             } else if (activeEffect === 'BIG_TEA') {
                 isTeaBig = true;
                 objects.forEach(obj => { 
-                    obj.element.classList.add('big-size'); 
-                    if (obj.type === 'bus') obj.width = 90;
-                    else width = 60;
+                    if (obj.type === 'bus') { obj.width = 90; obj.height = 55; }
+                    else { obj.width = 60; obj.height = 70; }
+                    obj.element.style.width = obj.width + 'px';
+                    obj.element.style.height = obj.height + 'px';
                 });
             }
 
@@ -1220,10 +1225,11 @@
             if (activeEffect === 'BIG_TEA') {
                 isTeaBig = false;
                 objects.forEach(obj => { 
-                    obj.element.classList.remove('big-size'); 
-                    if (obj.type === 'bus') obj.width = 55;
-                    else if (obj.type === 'nectar') obj.width = 26;
-                    else obj.width = 30;
+                    if (obj.type === 'bus') { obj.width = 55; obj.height = 35; }
+                    else if (obj.type === 'nectar') { obj.width = 26; obj.height = 34; }
+                    else { obj.width = 30; obj.height = 35; }
+                    obj.element.style.width = obj.width + 'px';
+                    obj.element.style.height = obj.height + 'px';
                 });
             }
             activeEffect = null;
@@ -1245,20 +1251,36 @@
             livesDisplay.textContent = hearts;
         }
 
-        function updateGame() {
-            if (isGameOver || !isGameRunning || isPaused) return;
+        // KLUCZOWA ZMIANA: UPDATE Z DELTA TIME (Zależny od czasu, nie Hz)
+        function updateGame(timestamp) {
+            if (isGameOver || !isGameRunning || !timestamp || isPaused) {
+                if (isGameRunning && !isGameOver && !isPaused) gameInterval = requestAnimationFrame(updateGame);
+                return;
+            }
 
-            if (keys.a && basketX > 0) basketX -= basketSpeed;
-            if (keys.d && basketX < (canvasWidth - currentBasketWidth)) basketX += basketSpeed;
+            // Obliczanie czasu, jaki minął od ostatniej klatki (w sekundach)
+            let dt = (timestamp - lastTime) / 1000;
+            
+            // Zabezpieczenie przed gigantycznym skokiem (np. lag systemu)
+            if (dt > 0.1) dt = 0.1; 
+            lastTime = timestamp;
+
+            // Ruch koszyka oparty o czas
+            const currentBasketSpeed = baseBasketSpeed; 
+            if (keys.a && basketX > 0) basketX -= currentBasketSpeed * dt;
+            if (keys.d && basketX < (canvasWidth - currentBasketWidth)) basketX += currentBasketSpeed * dt;
             basket.style.left = basketX + 'px';
 
             for (let i = objects.length - 1; i >= 0; i--) {
                 let obj = objects[i];
                 let speedToUse = isChaosMode ? obj.speed : currentFallSpeed;
-                obj.y += speedToUse;
+                
+                // Ruch obiektów oparty o czas
+                obj.y += speedToUse * dt;
                 obj.element.style.top = obj.y + 'px';
 
-                if (obj.y >= 645 && obj.y <= 675) {
+                // Kolizje
+                if (obj.y + obj.height >= 640 && obj.y <= 685) {
                     if (obj.x + obj.width >= basketX && obj.x <= basketX + currentBasketWidth) {
                         if (obj.type === 'bus') {
                             if (isImmortal) {
@@ -1291,6 +1313,7 @@
                     }
                 }
 
+                // Spadnięcie poza ekran
                 if (obj.y > canvasHeight) {
                     if (obj.type === 'normal' || obj.type === 'green') { 
                         if (!isImmortal) {
@@ -1349,6 +1372,7 @@
             if (!isContinuation) triggerStartBeePhrase();
             startBeeRandomTalk();
             
+            lastTime = performance.now(); // Reset czasu przed startem pętli
             gameInterval = requestAnimationFrame(updateGame);
             updateSpawnInterval(currentSpawnRate);
             
