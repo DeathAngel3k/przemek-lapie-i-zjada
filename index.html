@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Przemek łapie (i zjada) herbate do kotła</title>
     <style>
-        /* [Cała sekcja CSS pozostaje bez zmian jak w poprzednim kodzie] */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #eef5db; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; overflow: hidden; }
         h1 { color: #4f6d7a; margin-bottom: 5px; text-align: center; font-size: 2rem; }
@@ -281,7 +280,6 @@
     </div>
 
     <script>
-        // [Sekcja JS - Tu wprowadzamy zmiany prędkości]
         const canvas = document.getElementById('game-canvas');
         const basket = document.getElementById('basket');
         const scoreDisplay = document.getElementById('score');
@@ -327,19 +325,18 @@
         let basketX = 260;
         let currentBasketWidth = 80; 
         
-        // --- ⚡ ZMIENNE PREDKOSCI (Delta Time) ⚡ ---
-        // Podkręciłem te wartości, aby gra była dynamiczniejsza!
-        const baseBasketSpeed = 550; // piksele na sekunde (było 300) -> Kocioł lata znacznie szybciej
-        const baseFallSpeed = 260;   // piksele na sekunde (było 180) -> Herbaty spadają szybciej na starcie
-        let currentFallSpeed = 260;
+        // --- 🛠️ ZMIENNE PRĘDKOŚCI (Skalibrowane pod idealny gameplay) 🛠️ ---
+        const baseBasketSpeed = 550; // Pozostaje szybki i responsywny (piksele/sekunda)
+        const baseFallSpeed = 210;   // ZMNIEJSZONE z 260 na 210 (herbaty spadają w sam raz!)
+        let currentFallSpeed = 210;
         let speedMultiplier = 1.0;
         
         let lastTime = 0;
 
         let score = 0; 
         let lives = 3;
-        let baseSpawnRate = 1000; // startowy spawn (było 1100) -> nieco gęściej na start
-        let currentSpawnRate = 1000;
+        let baseSpawnRate = 1100;    // ZWIĘKSZONE z 1000ms na 1100ms (rzadszy opad na starcie)
+        let currentSpawnRate = 1100;
         let isChaosMode = false;
 
         let activeEffect = null; 
@@ -621,20 +618,20 @@
                 lastTime = performance.now(); gameInterval = requestAnimationFrame(updateGame);
                 updateSpawnInterval(currentSpawnRate);
                 
-                // --- ⚡ PRZYSPIESZONE TRUDNIENIE SIE GRY ⚡ ---
+                // --- 🛠️ WOLNIEJSZE TRUDNIENIE PO RESAWNIE 🛠️ ---
                 speedInterval = setInterval(() => {
                     if (!isGameOver && isGameRunning && !isPaused) { 
-                        speedMultiplier += 0.15; // Było 0.1 (szybciej rośnie prędkość)
+                        speedMultiplier += 0.10; 
                         calculateFallSpeed(); 
                     }
-                }, 12000); // Było co 15s (częściej rośnie prędkość)
+                }, 16000); 
 
                 dynamicSpawnInterval = setInterval(() => {
-                    if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 250) { // Dolny limit mniejszy (było 350)
-                        currentSpawnRate -= 70; // Było 50 (szybciej gęstnieje deszcz)
+                    if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 300) { 
+                        currentSpawnRate -= 50; 
                         updateSpawnInterval(currentSpawnRate);
                     }
-                }, 4000); // Było co 5s (częściej gęstnieje deszcz)
+                }, 5000); 
                 
                 startBeeRandomTalk(); updateLivesUI();
             }
@@ -699,8 +696,7 @@
             objEl.style.left = randomX + 'px'; objEl.style.top = '-60px';
             let specSpeed = currentFallSpeed;
             if (isChaosMode) {
-                // Prędkość w chaosie też podkręcona (skalowanie delty)
-                specSpeed = (Math.random() * 400 + 150) * speedMultiplier; 
+                specSpeed = (Math.random() * 350 + 130) * speedMultiplier; 
             }
             canvas.appendChild(objEl);
             objects.push({ element: objEl, x: randomX, y: -60, type: type, width: width, height: height, speed: specSpeed });
@@ -724,7 +720,7 @@
             else if (activeEffect === 'BIG_TEA') {
                 isTeaBig = true;
                 objects.forEach(obj => { 
-                    if (obj.type === 'bus') { obj.width = 90; obj.height = 55; } else { obj.width = 60; obj.height = 70; }
+                    if (obj.type === 'bus') { obj.width = 90; obj.height = 55; } else { width = 60; height = 70; }
                     obj.element.style.width = obj.width + 'px'; obj.element.style.height = obj.height + 'px';
                 });
             }
@@ -828,20 +824,20 @@
             lastTime = performance.now(); gameInterval = requestAnimationFrame(updateGame);
             updateSpawnInterval(currentSpawnRate);
             
-            // --- ⚡ TRUDNIENIE SIE GRY NA START ⚡ ---
+            // --- 🛠️ ZBALANSOWANE SKALOWANIE TRUDNOŚCI 🛠️ ---
             speedInterval = setInterval(() => {
                 if (!isGameOver && isGameRunning && !isPaused) { 
-                    speedMultiplier += 0.15; // Było 0.1
+                    speedMultiplier += 0.10; // Płynniejsze przyspieszanie
                     calculateFallSpeed(); 
                 }
-            }, 12000); // Było 15s
+            }, 16000); // Rzadziej (co 16 sekund zamiast 12)
 
             dynamicSpawnInterval = setInterval(() => {
-                if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 250) { // Dolny limit mniejszy
-                    currentSpawnRate -= 70; // Było 50
+                if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 300) { 
+                    currentSpawnRate -= 50; // Spokojniejsze zagęszczanie deszczu
                     updateSpawnInterval(currentSpawnRate);
                 }
-            }, 4000); // Było 5s
+            }, 5000); // Co 5 sekund
             updateGlobalCurrencyUI();
         }
 
