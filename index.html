@@ -3,243 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Złap herbate do kotła</title>
+    <title>Przemek łapie (i zjada) herbate do kotła</title>
     <style>
+        /* [Cała sekcja CSS pozostaje bez zmian jak w poprzednim kodzie] */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background: #eef5db;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow: hidden;
-        }
-
+        body { background: #eef5db; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; overflow: hidden; }
         h1 { color: #4f6d7a; margin-bottom: 5px; text-align: center; font-size: 2rem; }
         #instrukcja { color: #7c9885; margin-bottom: 15px; font-size: 1.1rem; text-align: center;}
-
-        #main-container {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            gap: 20px;
-            position: relative;
-            width: 100%;
-            max-width: 1500px;
-        }
-
-        #left-sidebar-bee {
-            width: 250px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            margin-top: 140px;
-            position: relative;
-        }
-
-        #game-and-bottom-container {
-            width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            flex-shrink: 0;
-        }
-
-        #right-sidebar-container {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-            margin-top: 52px;
-        }
-
-        #right-sidebar-main {
-            width: 260px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex-shrink: 0;
-        }
-
-        #right-sidebar-tickets {
-            width: 140px;
-            flex-shrink: 0;
-        }
-
-        #bee-npc-container {
-            width: 100%;
-            height: 350px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
-        }
-
-        #bee-bubble {
-            position: absolute;
-            top: -110px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            border: 4px solid #4f6d7a;
-            border-radius: 16px;
-            padding: 14px;
-            font-weight: bold;
-            color: #2c3e50;
-            text-align: center;
-            width: 230px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            font-size: 1.05rem;
-            pointer-events: none;
-            z-index: 20;
-        }
-        #bee-bubble::after {
-            content: ''; position: absolute; bottom: -16px; left: 50%;
-            transform: translateX(-50%); border-width: 16px 16px 0;
-            border-style: solid; border-color: white transparent; display: block; width: 0; z-index: 1;
-        }
-        #bee-bubble::before {
-            content: ''; position: absolute; bottom: -22px; left: 50%;
-            transform: translateX(-50%); border-width: 18px 18px 0;
-            border-style: solid; border-color: #4f6d7a transparent; display: block; width: 0; z-index: 0;
-        }
-
-        #bee-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            z-index: 5;
-            user-select: none;
-        }
-
-        #ui-container {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 5px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #333;
-            width: 100%;
-            justify-content: center;
-        }
+        #main-container { display: flex; align-items: flex-start; justify-content: center; gap: 20px; position: relative; width: 100%; max-width: 1500px; }
+        #left-sidebar-bee { width: 250px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; margin-top: 140px; position: relative; }
+        #game-and-bottom-container { width: 600px; display: flex; flex-direction: column; align-items: center; gap: 15px; flex-shrink: 0; }
+        #right-sidebar-container { display: flex; gap: 15px; align-items: flex-start; margin-top: 52px; }
+        #right-sidebar-main { width: 260px; display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
+        #right-sidebar-tickets { width: 140px; flex-shrink: 0; }
+        #bee-npc-container { width: 100%; height: 350px; position: relative; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); }
+        #bee-bubble { position: absolute; top: -110px; left: 50%; transform: translateX(-50%); background: white; border: 4px solid #4f6d7a; border-radius: 16px; padding: 14px; font-weight: bold; color: #2c3e50; text-align: center; width: 230px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.2s ease; font-size: 1.05rem; pointer-events: none; z-index: 20; }
+        #bee-bubble::after { content: ''; position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); border-width: 16px 16px 0; border-style: solid; border-color: white transparent; display: block; width: 0; z-index: 1; }
+        #bee-bubble::before { content: ''; position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); border-width: 18px 18px 0; border-style: solid; border-color: #4f6d7a transparent; display: block; width: 0; z-index: 0; }
+        #bee-image { max-width: 100%; max-height: 100%; object-fit: contain; z-index: 5; user-select: none; }
+        #ui-container { display: flex; gap: 15px; margin-bottom: 5px; font-size: 1.1rem; font-weight: bold; color: #333; width: 100%; justify-content: center; }
         .stat-box { background: white; padding: 8px 14px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 5px; }
         #lives-display { color: #e74c3c; letter-spacing: 2px; }
-
-        .sidebar-box {
-            background: white;
-            border: 3px solid #4f6d7a;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-            text-align: center;
-        }
+        .sidebar-box { background: white; border: 3px solid #4f6d7a; border-radius: 12px; padding: 15px; box-shadow: 0 6px 12px rgba(0,0,0,0.08); text-align: center; }
         .sidebar-box h3 { font-size: 0.9rem; color: #7c9885; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
         .sidebar-value { font-size: 1.8rem; font-weight: bold; color: #2c3e50; }
-
-        .vertical-inventory-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 5px;
-        }
-        .inventory-item-slot { 
-            background: #34495e; 
-            color: white;
-            padding: 10px 12px; 
-            border-radius: 8px; 
-            border: 2px solid #2c3e50; 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center; 
-            font-weight: bold; 
-            font-size: 0.85rem; 
-            cursor: pointer;
-            transition: background 0.2s;
-            text-align: left;
-        }
+        .vertical-inventory-list { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
+        .inventory-item-slot { background: #34495e; color: white; padding: 10px 12px; border-radius: 8px; border: 2px solid #2c3e50; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; text-align: left; }
         .inventory-item-slot:hover { background: #415b76; }
         .inventory-item-slot span.count { color: #f1c40f; font-size: 1rem; }
-
-        #game-canvas {
-            width: 600px;
-            height: 700px;
-            background: linear-gradient(to bottom, #c7e8f3, #e6f5fa);
-            position: relative;
-            overflow: hidden;
-            border: 4px solid #4f6d7a;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-        }
-
-        #pause-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 36px;
-            height: 36px;
-            background: white;
-            border: 2px solid #4f6d7a;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            z-index: 8;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-        }
+        #game-canvas { width: 600px; height: 700px; background: linear-gradient(to bottom, #c7e8f3, #e6f5fa); position: relative; overflow: hidden; border: 4px solid #4f6d7a; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        #pause-btn { position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; background: white; border: 2px solid #4f6d7a; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; z-index: 8; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s; }
         #pause-btn:hover { background: #eee; }
-
         #effect-bar { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: #f1c40f; color: #333; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); z-index: 5; display: none; white-space: nowrap; }
-        
-        #basket { 
-            width: 80px; 
-            height: 45px; 
-            background: #2c3e50; 
-            position: absolute; 
-            bottom: 15px; 
-            left: 260px; 
-            border-radius: 4px 4px 25px 25px; 
-            border: 4px solid #1a252f; 
-            box-shadow: inset 0 6px 0 rgba(255,255,255,0.1); 
-            transition: width 0.1s ease; 
-            will-change: left;
-        }
-        #basket::before {
-            content: ''; position: absolute; top: -4px; left: -6px;
-            width: calc(100% + 12px); height: 6px; background: #1a252f; border-radius: 4px;
-        }
-        #basket::after { 
-            content: ''; position: absolute; top: 10px; left: -10px; 
-            width: 10px; height: 14px; border: 3px solid #1a252f; 
-            border-right: none; border-radius: 8px 0 0 8px;
-        }
-
+        #basket { width: 80px; height: 45px; background: #2c3e50; position: absolute; bottom: 15px; left: 260px; border-radius: 4px 4px 25px 25px; border: 4px solid #1a252f; box-shadow: inset 0 6px 0 rgba(255,255,255,0.1); transition: width 0.1s ease; will-change: left; }
+        #basket::before { content: ''; position: absolute; top: -4px; left: -6px; width: calc(100% + 12px); height: 6px; background: #1a252f; border-radius: 4px; }
+        #basket::after { content: ''; position: absolute; top: 10px; left: -10px; width: 10px; height: 14px; border: 3px solid #1a252f; border-right: none; border-radius: 8px 0 0 8px; }
         .score-popup { position: absolute; font-weight: bold; font-size: 1.3rem; z-index: 6; animation: floatUp 0.8s ease-out forwards; pointer-events: none; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-40px); opacity: 0; } }
-
-        /* Klasa dla optymalizacji obrazków */
-        .falling-obj { 
-            position: absolute; 
-            top: -60px; 
-            object-fit: contain;
-            will-change: transform, top;
-            pointer-events: none;
-        }
-
+        .falling-obj { position: absolute; top: -60px; object-fit: contain; will-change: transform, top; pointer-events: none; }
         .overlay-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: 8px; padding: 20px; }
         .hidden { display: none !important; }
         .overlay-screen h2 { font-size: 2.2rem; color: #f4d06f; margin-bottom: 5px; text-align: center; }
-        
         .menu-btn-container { display: flex; flex-direction: column; gap: 12px; width: 280px; margin-top: 15px; }
         .btn { padding: 12px 24px; font-size: 1.1rem; font-weight: bold; background: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-align: center; }
         .btn:hover { background: #27ae60; transform: scale(1.03); }
@@ -251,9 +55,7 @@
         .btn-red:hover { background: #c0392b; }
         .btn-secondary { background: #7f8c8d; }
         .btn-secondary:hover { background: #717d7e; }
-
         #game-over-screen h2 { color: #ff7675; }
-
         .shop-container { width: 100%; max-width: 550px; display: flex; flex-direction: column; height: 380px; }
         .shop-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .shop-tab-btn { flex: 1; padding: 10px; background: #34495e; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
@@ -270,40 +72,33 @@
 </head>
 <body>
 
-    <h1>Złap herbate do kotła</h1>
+    <h1>Przemek łapie (i zjada) herbate do kotła ☕</h1>
     <div id="instrukcja">Sterowanie: <b>A</b> / <b>D</b> | Użyj przedmiotów klawiszami: <b>1</b>, <b>2</b>, <b>3</b>, <b>4</b></div>
-
     <div id="main-container">
-        
         <div id="left-sidebar-bee">
             <div id="bee-npc-container">
                 <div id="bee-bubble">Cześć! Złap jak najwięcej herbat i przemień je w PSZunkty!</div>
                 <img src="bee-space.png" id="bee-image" alt="Pszczoła NPC z kosmosu">
             </div>
         </div>
-
         <div id="game-and-bottom-container">
-            
             <div id="ui-container">
                 <div class="stat-box">Życia: <span id="lives-display">❤️❤️❤️</span></div>
                 <div class="stat-box">Herbaty: <span id="score" style="color: #db7c7c;">0</span> ☕</div>
                 <div class="stat-box">Prędkość: <span id="speed-level">1.0</span>x</div>
             </div>
-
             <div id="game-canvas">
                 <button id="pause-btn" onclick="togglePauseGame()">⚙️</button>
                 <div id="effect-bar">Aktywny efekt: Brak (0s)</div>
                 <div id="basket"></div>
-                
                 <div id="main-menu-screen" class="overlay-screen">
-                    <h2>Złap<br>herbate do kotła</h2>
+                    <h2>Przemek łapie (i zjada)<br>herbate do kotła</h2>
                     <p style="color: #bbb; font-style: italic; margin-top: 10px;">Złap jak najwięcej herbat i przemień je w PSZunkty!</p>
                     <div class="menu-btn-container">
                         <button class="btn" onclick="showModeSelection()">GRAJ</button>
                         <button class="btn btn-orange" onclick="showShop()">SZklep</button>
                     </div>
                 </div>
-
                 <div id="mode-selection-screen" class="overlay-screen hidden">
                     <h2>Wybierz Tryb Gry</h2>
                     <div class="menu-btn-container">
@@ -312,7 +107,6 @@
                         <button class="btn btn-secondary" onclick="backToMainMenu()">Powrót</button>
                     </div>
                 </div>
-
                 <div id="pause-screen" class="overlay-screen hidden">
                     <h2>Gra wstrzymana ⏸️</h2>
                     <div class="menu-btn-container">
@@ -320,17 +114,14 @@
                         <button class="btn btn-red" onclick="quitToMainMenuFromPause()">Powrót do Menu</button>
                     </div>
                 </div>
-
                 <div id="shop-screen" class="overlay-screen hidden">
                     <h2>PSZczeli SZklep 🛒</h2>
                     <div style="font-weight: bold; color: #f1c40f; margin-bottom: 15px;" id="shop-wallet">PSZunkty: 0 🪙</div>
-                    
                     <div class="shop-container">
                         <div class="shop-tabs">
                             <button id="tab-one-time" class="shop-tab-btn active" onclick="switchShopTab('one-time')">pSZedmioty jednorazowe</button>
                             <button id="tab-perm" class="shop-tab-btn" onclick="switchShopTab('perm')">pernamentne ulepSZenia</button>
                         </div>
-                        
                         <div id="shop-one-time-content" class="shop-content">
                             <div class="shop-item">
                                 <div class="shop-item-info">
@@ -373,7 +164,6 @@
                                 <button class="shop-buy-btn" onclick="buyItem('god', 60)">KUP</button>
                             </div>
                         </div>
-                        
                         <div id="shop-perm-content" class="shop-content hidden">
                             <div class="shop-item">
                                 <div class="shop-item-info">
@@ -433,19 +223,16 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="menu-btn-container" style="width: 200px; margin-top: 10px;">
                         <button class="btn btn-secondary" onclick="backToMainMenu()">Powrót</button>
                     </div>
                 </div>
-
                 <div id="game-over-screen" class="overlay-screen hidden">
                     <h2>Koniec Gry!</h2>
                     <p style="font-size: 1.2rem; margin-bottom: 5px;">Zebrane Herbaty: <span id="final-score" style="color: #db7c7c; font-weight: bold;">0</span> ☕</p>
                     <div id="conversion-box" style="background: rgba(241, 196, 15, 0.15); border: 2px solid #f1c40f; padding: 10px 15px; border-radius: 8px; margin: 10px 0; text-align: center; font-weight: bold;">
                         Przelicznik <span id="end-conversion-rate">1:1.0</span>! Zarobiłeś: <span id="converted-pszunktu" style="color:#f1c40f;">+0</span> PSZunktów 🪙
                     </div>
-                    
                     <div class="menu-btn-container">
                         <button id="continue-btn" class="btn btn-gold hidden" onclick="useTicketAndContinue()">Użyj PSZczelego biletu (Kontynuuj)</button>
                         <button class="btn" onclick="resetGame()">Zagraj od nowa</button>
@@ -454,7 +241,6 @@
                 </div>
             </div>
         </div>
-
         <div id="right-sidebar-container">
             <div id="right-sidebar-main">
                 <div class="sidebar-box">
@@ -462,7 +248,6 @@
                     <div class="sidebar-value" id="sidebar-pszunkty">0 🪙</div>
                     <div style="font-size: 0.85rem; color: #7f8c8d; font-weight: bold; margin-top: 5px;">PSZunkty</div>
                 </div>
-
                 <div class="sidebar-box" style="text-align: left;">
                     <h3 style="text-align: center; margin-bottom: 8px;">pSZedmioty jednorazowe</h3>
                     <div class="vertical-inventory-list">
@@ -485,7 +270,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="right-sidebar-tickets">
                 <div class="sidebar-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
                     <h3>PSZczele Bilety</h3>
@@ -494,10 +278,10 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
+        // [Sekcja JS - Tu wprowadzamy zmiany prędkości]
         const canvas = document.getElementById('game-canvas');
         const basket = document.getElementById('basket');
         const scoreDisplay = document.getElementById('score');
@@ -543,19 +327,19 @@
         let basketX = 260;
         let currentBasketWidth = 80; 
         
-        // ZMIENNE PREDKOSCI (baza oparta na milisekundach dla 60 klatek na sekunde jako punkt odniesienia)
-        const baseBasketSpeed = 300; // piksele na sekunde
-        const baseFallSpeed = 180;   // piksele na sekunde
-        let currentFallSpeed = 180;
+        // --- ⚡ ZMIENNE PREDKOSCI (Delta Time) ⚡ ---
+        // Podkręciłem te wartości, aby gra była dynamiczniejsza!
+        const baseBasketSpeed = 550; // piksele na sekunde (było 300) -> Kocioł lata znacznie szybciej
+        const baseFallSpeed = 260;   // piksele na sekunde (było 180) -> Herbaty spadają szybciej na starcie
+        let currentFallSpeed = 260;
         let speedMultiplier = 1.0;
         
-        // DO OPTYMALIZACJI DELTA TIME
         let lastTime = 0;
 
         let score = 0; 
         let lives = 3;
-        let baseSpawnRate = 1100; 
-        let currentSpawnRate = 1100;
+        let baseSpawnRate = 1000; // startowy spawn (było 1100) -> nieco gęściej na start
+        let currentSpawnRate = 1000;
         let isChaosMode = false;
 
         let activeEffect = null; 
@@ -595,7 +379,6 @@
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'a') keys.a = true;
             if (e.key.toLowerCase() === 'd') keys.d = true;
-            
             if (isGameRunning && !isGameOver && !isPaused) {
                 if (e.key === '1') useHealItem();
                 if (e.key === '2') useUkranianItem();
@@ -616,7 +399,6 @@
             localStorage.setItem('psz_ukr', inventory.ukr);
             localStorage.setItem('psz_kocioł', inventory.kocioł);
             localStorage.setItem('psz_god', inventory.god);
-
             localStorage.setItem('psz_perm_goldChance', permUpgrades.goldChance);
             localStorage.setItem('psz_perm_greenChance', permUpgrades.greenChance);
             localStorage.setItem('psz_perm_maxLives', permUpgrades.maxLives);
@@ -624,38 +406,28 @@
             localStorage.setItem('psz_perm_moreTea', permUpgrades.moreTea);
             localStorage.setItem('psz_perm_effectDuration', permUpgrades.effectDuration);
             localStorage.setItem('psz_perm_basketSize', permUpgrades.basketSize);
-
             updateGlobalCurrencyUI();
         }
 
         function getUpgradePrice(key) {
             let basePrice = 20;
             let currentLvl = permUpgrades[key];
-            if (key === 'moreTea') {
-                basePrice = 500;
-                currentLvl = permUpgrades.moreTea - 1;
-            } else if (key === 'maxLives' || key === 'basketSize') {
-                basePrice = 100;
-            } else if (key === 'cashMultiplier') {
-                basePrice = 700;
-            }
+            if (key === 'moreTea') { basePrice = 500; currentLvl = permUpgrades.moreTea - 1; } 
+            else if (key === 'maxLives' || key === 'basketSize') { basePrice = 100; } 
+            else if (key === 'cashMultiplier') { basePrice = 700; }
             return basePrice * Math.pow(2, currentLvl);
         }
 
-        function getNormalBasketWidth() {
-            return 80 + (permUpgrades.basketSize * 8); 
-        }
+        function getNormalBasketWidth() { return 80 + (permUpgrades.basketSize * 8); }
 
         function updateGlobalCurrencyUI() {
             sidebarPszunkty.textContent = playerPszunkty + " 🪙";
             shopWallet.textContent = "PSZunkty: " + playerPszunkty + " 🪙";
-            
             document.getElementById('shop-ticket-count').textContent = inventory.tickets;
             document.getElementById('shop-heal-count').textContent = inventory.heal;
             document.getElementById('shop-ukr-count').textContent = inventory.ukr;
             document.getElementById('shop-kocioł-count').textContent = inventory.kocioł;
             document.getElementById('shop-god-count').textContent = inventory.god;
-
             document.getElementById('bottom-ticket-count').textContent = inventory.tickets;
             document.getElementById('bottom-heal-count').textContent = inventory.heal;
             document.getElementById('bottom-ukr-count').textContent = inventory.ukr;
@@ -665,80 +437,45 @@
             let bLvl = permUpgrades.basketSize;
             document.getElementById('perm-basket-lvl').textContent = bLvl;
             document.getElementById('perm-basket-val').textContent = 80 + (bLvl * 8);
-            if(bLvl >= 10) {
-                document.getElementById('btn-buy-perm-basket').disabled = true;
-                document.getElementById('btn-buy-perm-basket').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-basket').disabled = false;
-                document.getElementById('price-perm-basket').textContent = getUpgradePrice('basketSize');
-            }
+            if(bLvl >= 10) { document.getElementById('btn-buy-perm-basket').disabled = true; document.getElementById('btn-buy-perm-basket').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-basket').disabled = false; document.getElementById('price-perm-basket').textContent = getUpgradePrice('basketSize'); }
 
             let gLvl = permUpgrades.goldChance;
             document.getElementById('perm-gold-lvl').textContent = gLvl;
             document.getElementById('perm-gold-val').textContent = gLvl;
-            if(gLvl >= 10) {
-                document.getElementById('btn-buy-perm-gold').disabled = true;
-                document.getElementById('btn-buy-perm-gold').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-gold').disabled = false;
-                document.getElementById('price-perm-gold').textContent = getUpgradePrice('goldChance');
-            }
+            if(gLvl >= 10) { document.getElementById('btn-buy-perm-gold').disabled = true; document.getElementById('btn-buy-perm-gold').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-gold').disabled = false; document.getElementById('price-perm-gold').textContent = getUpgradePrice('goldChance'); }
 
             let grLvl = permUpgrades.greenChance;
             document.getElementById('perm-green-lvl').textContent = grLvl;
             document.getElementById('perm-green-val').textContent = (grLvl * 2);
-            if(grLvl >= 10) {
-                document.getElementById('btn-buy-perm-green').disabled = true;
-                document.getElementById('btn-buy-perm-green').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-green').disabled = false;
-                document.getElementById('price-perm-green').textContent = getUpgradePrice('greenChance');
-            }
+            if(grLvl >= 10) { document.getElementById('btn-buy-perm-green').disabled = true; document.getElementById('btn-buy-perm-green').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-green').disabled = false; document.getElementById('price-perm-green').textContent = getUpgradePrice('greenChance'); }
 
             let lLvl = permUpgrades.maxLives;
             document.getElementById('perm-lives-lvl').textContent = lLvl;
             document.getElementById('perm-lives-val').textContent = 3 + lLvl;
-            if(lLvl >= 7) {
-                document.getElementById('btn-buy-perm-lives').disabled = true;
-                document.getElementById('btn-buy-perm-lives').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-lives').disabled = false;
-                document.getElementById('price-perm-lives').textContent = getUpgradePrice('maxLives');
-            }
+            if(lLvl >= 7) { document.getElementById('btn-buy-perm-lives').disabled = true; document.getElementById('btn-buy-perm-lives').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-lives').disabled = false; document.getElementById('price-perm-lives').textContent = getUpgradePrice('maxLives'); }
 
             let rLvl = permUpgrades.cashMultiplier;
             document.getElementById('perm-rate-lvl').textContent = rLvl;
             document.getElementById('perm-rate-val').textContent = (1.0 + (rLvl * 0.2)).toFixed(1);
-            if(rLvl >= 15) {
-                document.getElementById('btn-buy-perm-rate').disabled = true;
-                document.getElementById('btn-buy-perm-rate').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-rate').disabled = false;
-                document.getElementById('price-perm-rate').textContent = getUpgradePrice('cashMultiplier');
-            }
+            if(rLvl >= 15) { document.getElementById('btn-buy-perm-rate').disabled = true; document.getElementById('btn-buy-perm-rate').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-rate').disabled = false; document.getElementById('price-perm-rate').textContent = getUpgradePrice('cashMultiplier'); }
 
             let mLvl = permUpgrades.moreTea;
             document.getElementById('perm-more-lvl').textContent = mLvl;
             document.getElementById('perm-more-norm').textContent = mLvl;
             document.getElementById('perm-more-green').textContent = (mLvl * 5);
-            if(mLvl >= 5) {
-                document.getElementById('btn-buy-perm-more').disabled = true;
-                document.getElementById('btn-buy-perm-more').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-more').disabled = false;
-                document.getElementById('price-perm-more').textContent = getUpgradePrice('moreTea');
-            }
+            if(mLvl >= 5) { document.getElementById('btn-buy-perm-more').disabled = true; document.getElementById('btn-buy-perm-more').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-more').disabled = false; document.getElementById('price-perm-more').textContent = getUpgradePrice('moreTea'); }
 
             let tLvl = permUpgrades.effectDuration;
             document.getElementById('perm-time-lvl').textContent = tLvl;
             document.getElementById('perm-time-val').textContent = (10 + tLvl);
-            if(tLvl >= 10) {
-                document.getElementById('btn-buy-perm-time').disabled = true;
-                document.getElementById('btn-buy-perm-time').textContent = "MAX POZIOM";
-            } else {
-                document.getElementById('btn-buy-perm-time').disabled = false;
-                document.getElementById('price-perm-time').textContent = getUpgradePrice('effectDuration');
-            }
+            if(tLvl >= 10) { document.getElementById('btn-buy-perm-time').disabled = true; document.getElementById('btn-buy-perm-time').textContent = "MAX POZIOM"; } 
+            else { document.getElementById('btn-buy-perm-time').disabled = false; document.getElementById('price-perm-time').textContent = getUpgradePrice('effectDuration'); }
         }
 
         function buyPermUpgrade(key) {
@@ -746,28 +483,21 @@
             if (key === 'moreTea') maxLvl = 5;
             if (key === 'maxLives') maxLvl = 7;
             if (key === 'cashMultiplier') maxLvl = 15;
-
             if (permUpgrades[key] >= maxLvl) return;
-
             let cost = getUpgradePrice(key);
             if (playerPszunkty >= cost) {
                 playerPszunkty -= cost;
                 permUpgrades[key]++;
                 savePlayerData();
                 maxPossibleLives = 3 + permUpgrades.maxLives;
-                
                 currentBasketWidth = getNormalBasketWidth();
                 basket.style.width = currentBasketWidth + 'px';
-
                 beeSpeak("Ulepszenie permanentne zakupione! PSZZ!", 2500);
-            } else {
-                beeSpeak("Masz za mało PSZunktów na ulepszenie!", 3000);
-            }
+            } else { beeSpeak("Masz za mało PSZunktów na ulepszenie!", 3000); }
         }
 
         function togglePauseGame() {
             if (!isGameRunning || isGameOver) return;
-
             if (!isPaused) {
                 isPaused = true;
                 pauseScreen.classList.remove('hidden');
@@ -776,269 +506,137 @@
             } else {
                 isPaused = false;
                 pauseScreen.classList.add('hidden');
-                lastTime = performance.now(); // Zapobiega skokowi po odpałowaniu pauzy
+                lastTime = performance.now(); 
                 gameInterval = requestAnimationFrame(updateGame);
                 updateSpawnInterval(currentSpawnRate);
             }
         }
 
         function quitToMainMenuFromPause() {
-            isPaused = false;
-            isGameRunning = false;
-            score = 0;
-            pauseScreen.classList.add('hidden');
-            mainMenuScreen.classList.remove('hidden');
+            isPaused = false; isGameRunning = false; score = 0;
+            pauseScreen.classList.add('hidden'); mainMenuScreen.classList.remove('hidden');
             resetGameEngineVisuals();
         }
 
         function useHealItem() {
             if (!isGameRunning || isGameOver || isPaused) return;
             if (inventory.heal > 0) {
-                if (lives === maxPossibleLives) {
-                    createPopup("Masz już pełne zdrowie!", "#7f8c8d");
-                    return;
-                }
-                inventory.heal--;
-                lives = maxPossibleLives;
-                updateLivesUI();
-                createPopup("Zdrówko odnowione! ❤️", "#2ecc71", true);
-                savePlayerData();
-            } else {
-                createPopup("Brak przedmiotu!", "#e74c3c");
-            }
+                if (lives === maxPossibleLives) { createPopup("Masz już pełne zdrowie!", "#7f8c8d"); return; }
+                inventory.heal--; lives = maxPossibleLives; updateLivesUI();
+                createPopup("Zdrówko odnowione! ❤️", "#2ecc71", true); savePlayerData();
+            } else { createPopup("Brak przedmiotu!", "#e74c3c"); }
         }
 
         function useUkranianItem() {
             if (!isGameRunning || isGameOver || isPaused) return;
-            if (isGodModeActive) {
-                createPopup("Zablokowane przez klątwę Boga! ❌", "#e74c3c");
-                return;
-            }
-            if (inventory.ukr > 0) {
-                inventory.ukr--;
-                savePlayerData();
-                activateUkranianSalvation();
-            } else {
-                createPopup("Brak przedmiotu!", "#e74c3c");
-            }
+            if (isGodModeActive) { createPopup("Zablokowane przez klątwę Boga! ❌", "#e74c3c"); return; }
+            if (inventory.ukr > 0) { inventory.ukr--; savePlayerData(); activateUkranianSalvation(); } 
+            else { createPopup("Brak przedmiotu!", "#e74c3c"); }
         }
 
         function activateUkranianSalvation() {
-            clearTimeout(immortalTimeout);
-            clearInterval(immortalInterval);
-            
-            isImmortal = true;
-            immortalTimeLeft = 15;
-            updateCombinedEffectsBar();
-
+            clearTimeout(immortalTimeout); clearInterval(immortalInterval);
+            isImmortal = true; immortalTimeLeft = 15; updateCombinedEffectsBar();
             immortalInterval = setInterval(() => {
                 if (isPaused) return; 
                 immortalTimeLeft--;
-                if (immortalTimeLeft <= 0) {
-                    isImmortal = false;
-                    clearInterval(immortalInterval);
-                    updateCombinedEffectsBar();
-                } else {
-                    updateCombinedEffectsBar();
-                }
+                if (immortalTimeLeft <= 0) { isImmortal = false; clearInterval(immortalInterval); updateCombinedEffectsBar(); } 
+                else { updateCombinedEffectsBar(); }
             }, 1000);
-
-            immortalTimeout = setTimeout(() => {
-                isImmortal = false;
-                updateCombinedEffectsBar();
-            }, 15000);
-
+            immortalTimeout = setTimeout(() => { isImmortal = false; updateCombinedEffectsBar(); }, 15000);
             createPopup("NIEŚMIERTELNOŚĆ ACTIVATED 🛡️", "#3498db", true);
         }
 
         function useKociołItem() {
             if (!isGameRunning || isGameOver || isPaused) return;
-            if (inventory.kocioł > 0) {
-                inventory.kocioł--;
-                savePlayerData();
-                createPopup("Mikstura z Kotła! 🧪", "#9b59b6", true);
-                activateGoldenEffect();
-            } else {
-                createPopup("Brak przedmiotu!", "#e74c3c");
-            }
+            if (inventory.kocioł > 0) { inventory.kocioł--; savePlayerData(); createPopup("Mikstura z Kotła! 🧪", "#9b59b6", true); activateGoldenEffect(); } 
+            else { createPopup("Brak przedmiotu!", "#e74c3c"); }
         }
 
         function useGodItem() {
             if (!isGameRunning || isGameOver || isPaused) return;
-            if (isGodModeActive) {
-                createPopup("Efekt jest już aktywny! 💰", "#f1c40f");
-                return;
-            }
+            if (isGodModeActive) { createPopup("Efekt jest już aktywny! 💰", "#f1c40f"); return; }
             if (inventory.god > 0) {
-                if (lives < 3) {
-                    createPopup("Wymagane minimum 3 serca! ❌", "#e74c3c");
-                    return;
-                }
-                inventory.god--;
-                lives -= 2;
-                updateLivesUI();
-                
-                isGodModeActive = true;
-                pointsMultiplier = 5; 
-                godTimeLeft = 10;
-                
+                if (lives < 3) { createPopup("Wymagane minimum 3 serca! ❌", "#e74c3c"); return; }
+                inventory.god--; lives -= 2; updateLivesUI();
+                isGodModeActive = true; pointsMultiplier = 5; godTimeLeft = 10;
                 createPopup("KONTRAKT PODPISANY! HERBATY x5! ☠️💰", "#f1c40f", true);
                 updateCombinedEffectsBar();
-                
-                if (activeEffect === 'EXTRA_POINTS') {
-                    clearActiveEffect(); 
-                }
-
+                if (activeEffect === 'EXTRA_POINTS') { clearActiveEffect(); }
                 godInterval = setInterval(() => {
                     if (isPaused) return; 
                     godTimeLeft--;
-                    if (godTimeLeft <= 0) {
-                        endGodModeEffect();
-                    } else {
-                        updateCombinedEffectsBar();
-                    }
+                    if (godTimeLeft <= 0) { endGodModeEffect(); } 
+                    else { updateCombinedEffectsBar(); }
                 }, 1000);
-
-                godTimeout = setTimeout(() => {
-                    endGodModeEffect();
-                }, 10000);
-
+                godTimeout = setTimeout(() => { endGodModeEffect(); }, 10000);
                 savePlayerData();
                 if (lives <= 0) endGame();
-            } else {
-                createPopup("Brak przedmiotu!", "#e74c3c");
-            }
+            } else { createPopup("Brak przedmiotu!", "#e74c3c"); }
         }
 
         function updateCombinedEffectsBar() {
             let activeTexts = [];
             if (isImmortal) activeTexts.push(`🛡️ Zbawienie (${immortalTimeLeft}s)`);
             if (isGodModeActive) activeTexts.push(`👑 Boskie x5 (${godTimeLeft}s)`);
-            
             if (activeEffect === 'BIG_BASKET') activeTexts.push(`🔥 Kocioł x2 (${effectTimeLeft}s)`);
             if (activeEffect === 'EXTRA_POINTS' && !isGodModeActive) activeTexts.push(`💰 Herbaty x2 (${effectTimeLeft}s)`);
             if (activeEffect === 'BIG_TEA') activeTexts.push(`🍋 Giganty (${effectTimeLeft}s)`);
-
-            if (activeTexts.length > 0) {
-                effectBar.style.display = 'block';
-                effectBar.textContent = "Efekty: " + activeTexts.join(" | ");
-            } else {
-                effectBar.style.display = 'none';
-            }
+            if (activeTexts.length > 0) { effectBar.style.display = 'block'; effectBar.textContent = "Efekty: " + activeTexts.join(" | "); } 
+            else { effectBar.style.display = 'none'; }
         }
 
         function endGodModeEffect() {
-            clearTimeout(godTimeout);
-            clearInterval(godInterval);
-            isGodModeActive = false;
-            pointsMultiplier = 1; 
+            clearTimeout(godTimeout); clearInterval(godInterval);
+            isGodModeActive = false; pointsMultiplier = 1; 
             createPopup("Boski kontrakt wygasł! 💸", "#e67e22", true);
             updateCombinedEffectsBar();
         }
 
-        function showModeSelection() {
-            mainMenuScreen.classList.add('hidden');
-            modeSelectionScreen.classList.remove('hidden');
-        }
-
-        function showShop() {
-            mainMenuScreen.classList.add('hidden');
-            shopScreen.classList.remove('hidden');
-            updateGlobalCurrencyUI();
-        }
-
-        function backToMainMenu() {
-            modeSelectionScreen.classList.add('hidden');
-            shopScreen.classList.add('hidden');
-            mainMenuScreen.classList.remove('hidden');
-            updateGlobalCurrencyUI();
-        }
-
-        function startNormalMode() {
-            isChaosMode = false;
-            modeSelectionScreen.classList.add('hidden');
-            score = 0; 
-            isTicketUsedInThisRound = false; 
-            startGame(false); 
-        }
-
-        function startChaosMode() {
-            isChaosMode = true;
-            modeSelectionScreen.classList.add('hidden');
-            score = 0;
-            isTicketUsedInThisRound = false;
-            startGame(false);
-        }
-
-        function returnToMenuFromGameOver() {
-            addEndGamePszunkty();
-            gameOverScreen.classList.add('hidden');
-            mainMenuScreen.classList.remove('hidden');
-            resetGameEngineVisuals();
-        }
+        function showModeSelection() { mainMenuScreen.classList.add('hidden'); modeSelectionScreen.classList.remove('hidden'); }
+        function showShop() { mainMenuScreen.classList.add('hidden'); shopScreen.classList.remove('hidden'); updateGlobalCurrencyUI(); }
+        function backToMainMenu() { modeSelectionScreen.classList.add('hidden'); shopScreen.classList.add('hidden'); mainMenuScreen.classList.remove('hidden'); updateGlobalCurrencyUI(); }
+        function startNormalMode() { isChaosMode = false; modeSelectionScreen.classList.add('hidden'); score = 0; isTicketUsedInThisRound = false; startGame(false); }
+        function startChaosMode() { isChaosMode = true; modeSelectionScreen.classList.add('hidden'); score = 0; isTicketUsedInThisRound = false; startGame(false); }
+        function returnToMenuFromGameOver() { addEndGamePszunkty(); gameOverScreen.classList.add('hidden'); mainMenuScreen.classList.remove('hidden'); resetGameEngineVisuals(); }
 
         function switchShopTab(tab) {
-            const tabOneTime = document.getElementById('tab-one-time');
-            const tabPerm = document.getElementById('tab-perm');
-            const contentOneTime = document.getElementById('shop-one-time-content');
-            const contentPerm = document.getElementById('shop-perm-content');
-
-            if (tab === 'one-time') {
-                tabOneTime.classList.add('active');
-                tabPerm.classList.remove('active');
-                contentOneTime.classList.remove('hidden');
-                contentPerm.classList.add('hidden');
-            } else {
-                tabPerm.classList.add('active');
-                tabOneTime.classList.remove('active');
-                contentPerm.classList.remove('hidden');
-                contentOneTime.classList.add('hidden');
-            }
+            const tabOneTime = document.getElementById('tab-one-time'); const tabPerm = document.getElementById('tab-perm');
+            const contentOneTime = document.getElementById('shop-one-time-content'); const contentPerm = document.getElementById('shop-perm-content');
+            if (tab === 'one-time') { tabOneTime.classList.add('active'); tabPerm.classList.remove('active'); contentOneTime.classList.remove('hidden'); contentPerm.classList.add('hidden'); } 
+            else { tabPerm.classList.add('active'); tabOneTime.classList.remove('active'); contentPerm.classList.remove('hidden'); contentOneTime.classList.add('hidden'); }
         }
 
         function buyItem(itemKey, cost) {
-            if (playerPszunkty >= cost) {
-                playerPszunkty -= cost;
-                inventory[itemKey]++;
-                savePlayerData();
-                beeSpeak("Zakup udany! PSZZZZ!", 2500);
-            } else {
-                beeSpeak("Masz za mało PSZunktów, jakiś pszyhlast z ciebie!", 3000);
-            }
+            if (playerPszunkty >= cost) { playerPszunkty -= cost; inventory[itemKey]++; savePlayerData(); beeSpeak("Zakup udany! PSZZZZ!", 2500); } 
+            else { beeSpeak("Masz za mało PSZunktów, jakiś pszyhlast z ciebie!", 3000); }
         }
 
         function useTicketAndContinue() {
             if (inventory.tickets > 0) {
-                inventory.tickets--;
-                savePlayerData();
-                gameOverScreen.classList.add('hidden');
-                
-                lives = maxPossibleLives;
-                isGameOver = false;
-                isGameRunning = true;
-                isTicketUsedInThisRound = true;
-                
+                inventory.tickets--; savePlayerData(); gameOverScreen.classList.add('hidden');
+                lives = maxPossibleLives; isGameOver = false; isGameRunning = true; isTicketUsedInThisRound = true;
                 beeSpeak("Odrrrrradzamy! Właściciel btw!", 4000);
-                
-                objects.forEach(obj => obj.element.remove());
-                objects = [];
-                
-                lastTime = performance.now();
-                gameInterval = requestAnimationFrame(updateGame);
+                objects.forEach(obj => obj.element.remove()); objects = [];
+                lastTime = performance.now(); gameInterval = requestAnimationFrame(updateGame);
                 updateSpawnInterval(currentSpawnRate);
                 
+                // --- ⚡ PRZYSPIESZONE TRUDNIENIE SIE GRY ⚡ ---
                 speedInterval = setInterval(() => {
-                    if (!isGameOver && isGameRunning && !isPaused) { speedMultiplier += 0.1; calculateFallSpeed(); }
-                }, 15000);
+                    if (!isGameOver && isGameRunning && !isPaused) { 
+                        speedMultiplier += 0.15; // Było 0.1 (szybciej rośnie prędkość)
+                        calculateFallSpeed(); 
+                    }
+                }, 12000); // Było co 15s (częściej rośnie prędkość)
 
                 dynamicSpawnInterval = setInterval(() => {
-                    if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 350) {
-                        currentSpawnRate -= 50; updateSpawnInterval(currentSpawnRate);
+                    if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 250) { // Dolny limit mniejszy (było 350)
+                        currentSpawnRate -= 70; // Było 50 (szybciej gęstnieje deszcz)
+                        updateSpawnInterval(currentSpawnRate);
                     }
-                }, 5000);
+                }, 4000); // Było co 5s (częściej gęstnieje deszcz)
                 
-                startBeeRandomTalk();
-                updateLivesUI();
+                startBeeRandomTalk(); updateLivesUI();
             }
         }
 
@@ -1046,194 +644,112 @@
             if (score > 0) {
                 let cashRate = 1.0 + (permUpgrades.cashMultiplier * 0.2);
                 let payout = Math.floor(score * cashRate);
-                playerPszunkty += payout;
-                score = 0;
-                savePlayerData();
+                playerPszunkty += payout; score = 0; savePlayerData();
             }
         }
 
         function beeSpeak(text, duration = 3000) {
-            beeBubble.textContent = text;
-            beeBubble.style.opacity = '1';
-            setTimeout(() => {
-                if (isGameRunning || isGameOver) {
-                    beeBubble.style.opacity = '0';
-                }
-            }, duration);
+            beeBubble.textContent = text; beeBubble.style.opacity = '1';
+            setTimeout(() => { if (isGameRunning || isGameOver) { beeBubble.style.opacity = '0'; } }, duration);
         }
 
         function triggerStartBeePhrase() {
-            const startPhrases = [
-                "Dalej tyci p, czas złapać herbatę!",
-                "Hej lil p, chodźmy złapać trochę herbaty!",
-                "Ej psz, idź po herbate!",
-                "Nasz mały koszmonauta idzie po Herbate!"
-            ];
-            const chosen = startPhrases[Math.floor(Math.random() * startPhrases.length)];
-            beeSpeak(chosen, 4000);
+            const startPhrases = ["Dalej tyci p, czas złapać herbatę!", "Hej lil p, chodźmy złapać trochę herbaty!", "Ej psz, idź po herbate!", "Nasz mały koszmonauta idzie po Herbate!"];
+            const chosen = startPhrases[Math.floor(Math.random() * startPhrases.length)]; beeSpeak(chosen, 4000);
         }
 
         function startBeeRandomTalk() {
             clearInterval(beeInterval);
             beeInterval = setInterval(() => {
                 if (!isGameRunning || isGameOver || isPaused) return;
-                
-                const randomPhrases = [
-                    "EJ PSZ",
-                    "czy masz może 3/6 punktów?",
-                    "je#ać gosz",
-                    "Koszmonautów Polskich",
-                    "PSZZZZ",
-                    "Jakiś Pszyhlast",
-                    "Dobra to jusz PSZesada",
-                    "Właściciel btw"
-                ];
-                const chosen = randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
-                beeSpeak(chosen, 3000);
+                const randomPhrases = ["EJ PSZ", "czy masz może 3/6 punktów?", "je#ać gosz", "Koszmonautów Polskich", "PSZZZZ", "Jakiś Pszyhlast", "Dobra to jusz PSZesada", "Właściciel btw"];
+                const chosen = randomPhrases[Math.floor(Math.random() * randomPhrases.length)]; beeSpeak(chosen, 3000);
             }, 8000 + Math.random() * 4000);
         }
 
         function createPopup(text, color, isBold = false) {
             const popup = document.createElement('div');
-            popup.classList.add('score-popup');
-            popup.textContent = text;
-            popup.style.color = color;
+            popup.classList.add('score-popup'); popup.textContent = text; popup.style.color = color;
             if (isBold) popup.style.fontWeight = '900';
-            
-            popup.style.left = (basketX + (currentBasketWidth / 2) - 15) + 'px';
-            popup.style.bottom = '60px'; 
-            
+            popup.style.left = (basketX + (currentBasketWidth / 2) - 15) + 'px'; popup.style.bottom = '60px'; 
             canvas.appendChild(popup);
             setTimeout(() => popup.remove(), 800);
         }
 
-        // ZAMIANA NA ZDJĘCIA PNG
         function createImgElement(src, className) {
-            const img = document.createElement('img');
-            img.src = src;
-            img.classList.add('falling-obj', className);
-            return img;
+            const img = document.createElement('img'); img.src = src; img.classList.add('falling-obj', className); return img;
         }
 
         function spawnObject() {
             if (isGameOver || !isGameRunning || isPaused) return;
-
-            let type = 'normal'; 
-            let width = 30;
-            let imgSrc = 'tea-normal.png';
-            let customClass = 'tea';
-
-            let goldChance = (permUpgrades.goldChance) / 100;    
-            let greenChance = (permUpgrades.greenChance * 2) / 100; 
+            let type = 'normal'; let width = 30; let imgSrc = 'tea-normal.png'; let customClass = 'tea';
+            let goldChance = (permUpgrades.goldChance) / 100; let greenChance = (permUpgrades.greenChance * 2) / 100; 
             const roll = Math.random();
-
-            if (roll < goldChance) { 
-                type = 'gold'; imgSrc = 'tea-gold.png'; customClass = 'gold'; width = 30;
-            } else if (roll < goldChance + greenChance) { 
-                type = 'green'; imgSrc = 'tea-green.png'; customClass = 'green-tea'; width = 30;
-            } else if (roll < goldChance + greenChance + 0.07) { 
-                type = 'bus'; imgSrc = 'bus.png'; customClass = 'bus'; width = 55;
-            } else if (roll < goldChance + greenChance + 0.12) { 
-                type = 'nectar'; imgSrc = 'nectar.png'; customClass = 'nectar'; width = 26;
-            }
-
+            if (roll < goldChance) { type = 'gold'; imgSrc = 'tea-gold.png'; customClass = 'gold'; width = 30; } 
+            else if (roll < goldChance + greenChance) { type = 'green'; imgSrc = 'tea-green.png'; customClass = 'green-tea'; width = 30; } 
+            else if (roll < goldChance + greenChance + 0.07) { type = 'bus'; imgSrc = 'bus.png'; customClass = 'bus'; width = 55; } 
+            else if (roll < goldChance + greenChance + 0.12) { type = 'nectar'; imgSrc = 'nectar.png'; customClass = 'nectar'; width = 26; }
             const objEl = createImgElement(imgSrc, customClass);
-            
-            let height = (type === 'bus') ? 35 : 35;
-            if (type === 'nectar') height = 34;
-
+            let height = (type === 'bus') ? 35 : 35; if (type === 'nectar') height = 34;
             if (isTeaBig) {
-                if (type === 'bus') { width = 90; height = 55; }
-                else { width = 60; height = 70; }
+                if (type === 'bus') { width = 90; height = 55; } else { width = 60; height = 70; }
             }
-            
-            objEl.style.width = width + 'px';
-            objEl.style.height = height + 'px';
-
+            objEl.style.width = width + 'px'; objEl.style.height = height + 'px';
             const randomX = Math.floor(Math.random() * (canvasWidth - width));
-            objEl.style.left = randomX + 'px';
-            objEl.style.top = '-60px';
-            
+            objEl.style.left = randomX + 'px'; objEl.style.top = '-60px';
             let specSpeed = currentFallSpeed;
             if (isChaosMode) {
-                specSpeed = (Math.random() * 300 + 120) * speedMultiplier; // Skalowanie dla delty
+                // Prędkość w chaosie też podkręcona (skalowanie delty)
+                specSpeed = (Math.random() * 400 + 150) * speedMultiplier; 
             }
-
             canvas.appendChild(objEl);
             objects.push({ element: objEl, x: randomX, y: -60, type: type, width: width, height: height, speed: specSpeed });
         }
 
         function updateSpawnInterval(rate) {
             if (spawnInterval) clearInterval(spawnInterval);
-            if (isGameRunning && !isGameOver && !isPaused) {
-                spawnInterval = setInterval(spawnObject, rate);
-            }
+            if (isGameRunning && !isGameOver && !isPaused) { spawnInterval = setInterval(spawnObject, rate); }
         }
 
         function activateGoldenEffect() {
-            if (isGodModeActive) {
-                const safeEffects = ['BIG_BASKET', 'BIG_TEA'];
-                executeEffect(safeEffects[Math.floor(Math.random() * safeEffects.length)]);
-            } else {
-                const effects = ['BIG_BASKET', 'EXTRA_POINTS', 'BIG_TEA'];
-                executeEffect(effects[Math.floor(Math.random() * effects.length)]);
-            }
+            if (isGodModeActive) { const safeEffects = ['BIG_BASKET', 'BIG_TEA']; executeEffect(safeEffects[Math.floor(Math.random() * safeEffects.length)]); } 
+            else { const effects = ['BIG_BASKET', 'EXTRA_POINTS', 'BIG_TEA']; executeEffect(effects[Math.floor(Math.random() * effects.length)]); }
         }
 
         function executeEffect(rolledEffect) {
-            clearActiveEffect();
-            activeEffect = rolledEffect;
-            
+            clearActiveEffect(); activeEffect = rolledEffect;
             effectTimeLeft = 10 + permUpgrades.effectDuration;
-
-            if (activeEffect === 'BIG_BASKET') {
-                currentBasketWidth = getNormalBasketWidth() * 2; 
-                basket.style.width = currentBasketWidth + 'px';
-            } else if (activeEffect === 'EXTRA_POINTS') {
-                pointsMultiplier = 2; 
-            } else if (activeEffect === 'BIG_TEA') {
+            if (activeEffect === 'BIG_BASKET') { currentBasketWidth = getNormalBasketWidth() * 2; basket.style.width = currentBasketWidth + 'px'; } 
+            else if (activeEffect === 'EXTRA_POINTS') { pointsMultiplier = 2; } 
+            else if (activeEffect === 'BIG_TEA') {
                 isTeaBig = true;
                 objects.forEach(obj => { 
-                    if (obj.type === 'bus') { obj.width = 90; obj.height = 55; }
-                    else { obj.width = 60; obj.height = 70; }
-                    obj.element.style.width = obj.width + 'px';
-                    obj.element.style.height = obj.height + 'px';
+                    if (obj.type === 'bus') { obj.width = 90; obj.height = 55; } else { obj.width = 60; obj.height = 70; }
+                    obj.element.style.width = obj.width + 'px'; obj.element.style.height = obj.height + 'px';
                 });
             }
-
             updateCombinedEffectsBar();
-
             effectInterval = setInterval(() => {
                 if (isPaused) return; 
-                effectTimeLeft--;
-                if (effectTimeLeft <= 0) { clearActiveEffect(); } 
-                else { updateCombinedEffectsBar(); }
+                effectTimeLeft--; if (effectTimeLeft <= 0) { clearActiveEffect(); } else { updateCombinedEffectsBar(); }
             }, 1000);
-
-            effectTimeout = setTimeout(() => {
-                if (!isPaused) clearActiveEffect();
-            }, effectTimeLeft * 1000);
+            effectTimeout = setTimeout(() => { if (!isPaused) clearActiveEffect(); }, effectTimeLeft * 1000);
         }
 
         function clearActiveEffect() {
             clearTimeout(effectTimeout); clearInterval(effectInterval);
-            if (activeEffect === 'BIG_BASKET') { 
-                currentBasketWidth = getNormalBasketWidth(); 
-                basket.style.width = currentBasketWidth + 'px'; 
-            }
+            if (activeEffect === 'BIG_BASKET') { currentBasketWidth = getNormalBasketWidth(); basket.style.width = currentBasketWidth + 'px'; }
             if (activeEffect === 'EXTRA_POINTS' && !isGodModeActive) pointsMultiplier = 1;
             if (activeEffect === 'BIG_TEA') {
                 isTeaBig = false;
                 objects.forEach(obj => { 
-                    if (obj.type === 'bus') { obj.width = 55; obj.height = 35; }
-                    else if (obj.type === 'nectar') { obj.width = 26; obj.height = 34; }
+                    if (obj.type === 'bus') { obj.width = 55; obj.height = 35; } 
+                    else if (obj.type === 'nectar') { obj.width = 26; obj.height = 34; } 
                     else { obj.width = 30; obj.height = 35; }
-                    obj.element.style.width = obj.width + 'px';
-                    obj.element.style.height = obj.height + 'px';
+                    obj.element.style.width = obj.width + 'px'; obj.element.style.height = obj.height + 'px';
                 });
             }
-            activeEffect = null;
-            updateCombinedEffectsBar();
+            activeEffect = null; updateCombinedEffectsBar();
         }
 
         function calculateFallSpeed() {
@@ -1242,86 +758,46 @@
         }
 
         function updateLivesUI() {
-            let hearts = "";
-            for (let i = 0; i < lives; i++) hearts += "❤️";
-            if (lives > 5) {
-                hearts = "❤️ x" + lives;
-            }
-            if (lives <= 0) hearts = "☠️";
-            livesDisplay.textContent = hearts;
+            let hearts = ""; for (let i = 0; i < lives; i++) hearts += "❤️";
+            if (lives > 5) { hearts = "❤️ x" + lives; } if (lives <= 0) hearts = "☠️"; livesDisplay.textContent = hearts;
         }
 
-        // KLUCZOWA ZMIANA: UPDATE Z DELTA TIME (Zależny od czasu, nie Hz)
         function updateGame(timestamp) {
             if (isGameOver || !isGameRunning || !timestamp || isPaused) {
                 if (isGameRunning && !isGameOver && !isPaused) gameInterval = requestAnimationFrame(updateGame);
                 return;
             }
-
-            // Obliczanie czasu, jaki minął od ostatniej klatki (w sekundach)
             let dt = (timestamp - lastTime) / 1000;
-            
-            // Zabezpieczenie przed gigantycznym skokiem (np. lag systemu)
-            if (dt > 0.1) dt = 0.1; 
-            lastTime = timestamp;
-
-            // Ruch koszyka oparty o czas
+            if (dt > 0.1) dt = 0.1; lastTime = timestamp;
             const currentBasketSpeed = baseBasketSpeed; 
             if (keys.a && basketX > 0) basketX -= currentBasketSpeed * dt;
             if (keys.d && basketX < (canvasWidth - currentBasketWidth)) basketX += currentBasketSpeed * dt;
             basket.style.left = basketX + 'px';
-
             for (let i = objects.length - 1; i >= 0; i--) {
                 let obj = objects[i];
                 let speedToUse = isChaosMode ? obj.speed : currentFallSpeed;
-                
-                // Ruch obiektów oparty o czas
                 obj.y += speedToUse * dt;
                 obj.element.style.top = obj.y + 'px';
-
-                // Kolizje
                 if (obj.y + obj.height >= 640 && obj.y <= 685) {
                     if (obj.x + obj.width >= basketX && obj.x <= basketX + currentBasketWidth) {
                         if (obj.type === 'bus') {
-                            if (isImmortal) {
-                                createPopup("Zablokowano 🛡️", "#3498db");
-                            } else {
-                                createPopup("-1 HP 🚌", "#e74c3c", true); lives--; updateLivesUI();
-                                if (lives <= 0) endGame();
-                            }
+                            if (isImmortal) { createPopup("Zablokowano 🛡️", "#3498db"); } 
+                            else { createPopup("-1 HP 🚌", "#e74c3c", true); lives--; updateLivesUI(); if (lives <= 0) endGame(); }
                         } else if (obj.type === 'nectar') {
                             if (lives < maxPossibleLives) { createPopup("+1 HP", "#e67e22", false); lives++; updateLivesUI(); } 
                             else { createPopup("MAX HP", "#2ecc71", false); }
-                        } else if (obj.type === 'gold') {
-                            createPopup(`EFEKT ✨`, "#f1c40f", true); 
-                            activateGoldenEffect();
-                        } else {
-                            let multiplierFromUpgrade = permUpgrades.moreTea; 
-                            let basePoints = 1 * multiplierFromUpgrade;
-                            
-                            if (obj.type === 'green') { 
-                                basePoints = 5 * multiplierFromUpgrade; 
-                                createPopup(`+${basePoints * pointsMultiplier} Herbat ☕`, "#2ecc71", false); 
-                            } else { 
-                                createPopup(`+${basePoints * pointsMultiplier} Herbata ☕`, "#db7c7c", false); 
-                            }
-                            
-                            score += (basePoints * pointsMultiplier); 
-                            scoreDisplay.textContent = score;
+                        } else if (obj.type === 'gold') { createPopup(`EFEKT ✨`, "#f1c40f", true); activateGoldenEffect(); } 
+                        else {
+                            let multiplierFromUpgrade = permUpgrades.moreTea; let basePoints = 1 * multiplierFromUpgrade;
+                            if (obj.type === 'green') { basePoints = 5 * multiplierFromUpgrade; createPopup(`+${basePoints * pointsMultiplier} Herbat ☕`, "#2ecc71", false); } 
+                            else { createPopup(`+${basePoints * pointsMultiplier} Herbata ☕`, "#db7c7c", false); }
+                            score += (basePoints * pointsMultiplier); scoreDisplay.textContent = score;
                         }
                         obj.element.remove(); objects.splice(i, 1); continue;
                     }
                 }
-
-                // Spadnięcie poza ekran
                 if (obj.y > canvasHeight) {
-                    if (obj.type === 'normal' || obj.type === 'green') { 
-                        if (!isImmortal) {
-                            lives--; 
-                            updateLivesUI(); 
-                            if (lives <= 0) endGame(); 
-                        }
-                    }
+                    if (obj.type === 'normal' || obj.type === 'green') { if (!isImmortal) { lives--; updateLivesUI(); if (lives <= 0) endGame(); } }
                     obj.element.remove(); objects.splice(i, 1); continue;
                 }
             }
@@ -1337,86 +813,48 @@
         }
 
         function resetGameEngineVisuals() {
-            objects.forEach(obj => obj.element.remove());
-            objects = [];
-            stopAllTimers();
-            clearActiveEffect();
-            
-            isImmortal = false;
-            isGodModeActive = false;
-            pointsMultiplier = 1;
-            isPaused = false;
-            pauseScreen.classList.add('hidden');
-            
-            maxPossibleLives = 3 + permUpgrades.maxLives;
-            lives = maxPossibleLives; 
-            speedMultiplier = 1.0; 
-            
-            currentBasketWidth = getNormalBasketWidth(); 
-            basketX = Math.floor((canvasWidth - currentBasketWidth) / 2); 
-            currentSpawnRate = baseSpawnRate; 
-            isGameOver = false;
-            
-            basket.style.width = currentBasketWidth + 'px'; 
-            basket.style.left = basketX + 'px';
+            objects.forEach(obj => obj.element.remove()); objects = []; stopAllTimers(); clearActiveEffect();
+            isImmortal = false; isGodModeActive = false; pointsMultiplier = 1; isPaused = false; pauseScreen.classList.add('hidden');
+            maxPossibleLives = 3 + permUpgrades.maxLives; lives = maxPossibleLives; speedMultiplier = 1.0; 
+            currentBasketWidth = getNormalBasketWidth(); basketX = Math.floor((canvasWidth - currentBasketWidth) / 2); 
+            currentSpawnRate = baseSpawnRate; isGameOver = false;
+            basket.style.width = currentBasketWidth + 'px'; basket.style.left = basketX + 'px';
             calculateFallSpeed(); updateLivesUI();
         }
 
         function startGame(isContinuation = false) {
-            if (!isContinuation) {
-                resetGameEngineVisuals();
-                score = 0;
-                scoreDisplay.textContent = '0';
-            }
-            isGameRunning = true;
-            if (!isContinuation) triggerStartBeePhrase();
-            startBeeRandomTalk();
-            
-            lastTime = performance.now(); // Reset czasu przed startem pętli
-            gameInterval = requestAnimationFrame(updateGame);
+            if (!isContinuation) { resetGameEngineVisuals(); score = 0; scoreDisplay.textContent = '0'; }
+            isGameRunning = true; if (!isContinuation) triggerStartBeePhrase(); startBeeRandomTalk();
+            lastTime = performance.now(); gameInterval = requestAnimationFrame(updateGame);
             updateSpawnInterval(currentSpawnRate);
             
+            // --- ⚡ TRUDNIENIE SIE GRY NA START ⚡ ---
             speedInterval = setInterval(() => {
-                if (!isGameOver && isGameRunning && !isPaused) { speedMultiplier += 0.1; calculateFallSpeed(); }
-            }, 15000);
+                if (!isGameOver && isGameRunning && !isPaused) { 
+                    speedMultiplier += 0.15; // Było 0.1
+                    calculateFallSpeed(); 
+                }
+            }, 12000); // Było 15s
 
             dynamicSpawnInterval = setInterval(() => {
-                if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 350) {
-                    currentSpawnRate -= 50; updateSpawnInterval(currentSpawnRate);
+                if (!isGameOver && isGameRunning && !isPaused && currentSpawnRate > 250) { // Dolny limit mniejszy
+                    currentSpawnRate -= 70; // Było 50
+                    updateSpawnInterval(currentSpawnRate);
                 }
-            }, 5000);
+            }, 4000); // Było 5s
             updateGlobalCurrencyUI();
         }
 
         function endGame() {
-            isGameOver = true; isGameRunning = false;
-            stopAllTimers(); clearActiveEffect();
-            
+            isGameOver = true; isGameRunning = false; stopAllTimers(); clearActiveEffect();
             let cashRate = 1.0 + (permUpgrades.cashMultiplier * 0.2);
             let finalPayout = Math.floor(score * cashRate);
-
-            finalScoreDisplay.textContent = score;
-            endConversionRate.textContent = "1:" + cashRate.toFixed(1);
-            convertedPszunktu.textContent = "+" + finalPayout;
-            
-            if (inventory.tickets > 0) {
-                continueBtn.classList.remove('hidden');
-            } else {
-                continueBtn.classList.add('hidden');
-            }
-            
-            gameOverScreen.classList.remove('hidden');
-            beeSpeak("O nie, koniec gry!", 5000);
+            finalScoreDisplay.textContent = score; endConversionRate.textContent = "1:" + cashRate.toFixed(1); convertedPszunktu.textContent = "+" + finalPayout;
+            if (inventory.tickets > 0) { continueBtn.classList.remove('hidden'); } else { continueBtn.classList.add('hidden'); }
+            gameOverScreen.classList.remove('hidden'); beeSpeak("O nie, koniec gry!", 5000);
         }
 
-        function resetGame() {
-            addEndGamePszunkty();
-            gameOverScreen.classList.add('hidden');
-            score = 0;
-            scoreDisplay.textContent = '0';
-            isTicketUsedInThisRound = false;
-            startGame(false);
-        }
+        function resetGame() { addEndGamePszunkty(); gameOverScreen.classList.add('hidden'); score = 0; scoreDisplay.textContent = '0'; isTicketUsedInThisRound = false; startGame(false); }
     </script>
 </body>
 </html>
